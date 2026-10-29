@@ -357,7 +357,28 @@
       .tracker span.done{ background:#c7f0c2; color:#1b6b1b; }
       .tracker span.now{ background:var(--sun); color:#3b2500; }
       .xtimer{ font-weight:800; color:#b91c1c; }
-    </style>
+          /* ===== Title v2 (system fonts only, no external assets) ===== */
+      .bb-title{ position:relative; display:flex; align-items:center; gap:10px; margin:2px 0 8px; animation:bbIn .9s cubic-bezier(.2,1.4,.4,1) both, bbBob 4s ease-in-out .9s infinite; }
+      .bb-emblem{ width:clamp(58px,15vw,84px); height:auto; flex:none; filter:drop-shadow(0 4px 0 rgba(58,34,0,.35)); animation:bbSwing 4s ease-in-out infinite; transform-origin:50% 60%; }
+      .bb-words{ display:flex; flex-direction:column; line-height:.9; font-family:Impact,"Anton","Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif; font-weight:900; text-transform:uppercase; }
+      .bb-words span{ position:relative; display:block; letter-spacing:.03em;
+        background:linear-gradient(180deg,#fff6c9 0%,#ffd84d 35%,#f4a300 60%,#b86a00 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
+        -webkit-text-stroke:2px #3a2200; paint-order:stroke fill;
+        filter:drop-shadow(1px 1px 0 #7a3f00) drop-shadow(1px 1px 0 #7a3f00) drop-shadow(1px 1px 0 #5a2d00) drop-shadow(2px 3px 0 #3a2200) drop-shadow(0 6px 8px rgba(11,40,70,.35)); }
+      .bb-words span::after{ content:attr(data-t); position:absolute; inset:0; background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%); background-size:250% 100%; background-position:150% 0; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-stroke:0; animation:bbShine 3.2s ease-in-out 1.2s infinite; }
+      .bb-l1{ font-size:clamp(30px,8.5vw,44px); color:transparent; }
+      .bb-l2{ font-size:clamp(40px,12.4vw,66px); }
+      .bb-spark{ position:absolute; width:14px; height:14px; pointer-events:none; background:radial-gradient(circle,#fff 0 18%,transparent 20%), conic-gradient(from 45deg,transparent 0 10%,#fff3b0 12%,transparent 14% 35%,#fff3b0 37%,transparent 39% 60%,#fff3b0 62%,transparent 64% 85%,#fff3b0 87%,transparent 89%); border-radius:50%; opacity:0; animation:bbTw 2.4s ease-in-out infinite; }
+      .bb-spark.s1{ top:4%; left:30%; } .bb-spark.s2{ top:40%; right:6%; animation-delay:.8s; } .bb-spark.s3{ bottom:2%; left:55%; animation-delay:1.5s; } .bb-spark.s4{ top:-4%; right:28%; animation-delay:2s; width:10px; height:10px; }
+      .bb-tag{ display:inline-block; background:linear-gradient(90deg,#0b4f86,#0f6aa8); color:#fff7d6 !important; padding:7px 14px; border-radius:999px; border:2px solid #ffd166; box-shadow:0 0 0 0 rgba(255,209,102,.6), 0 4px 0 rgba(11,79,134,.25); animation:bbGlow 2.6s ease-in-out infinite; }
+      @keyframes bbIn{ from{ opacity:0; transform:translateY(-30px) scale(.7) rotate(-4deg);} to{ opacity:1; transform:none; } }
+      @keyframes bbBob{ 0%,100%{ transform:translateY(0) rotate(0);} 50%{ transform:translateY(-5px) rotate(-1deg);} }
+      @keyframes bbSwing{ 0%,100%{ transform:rotate(-6deg);} 50%{ transform:rotate(6deg);} }
+      @keyframes bbShine{ 0%{ background-position:150% 0;} 60%,100%{ background-position:-60% 0;} }
+      @keyframes bbTw{ 0%,100%{ opacity:0; transform:scale(.3) rotate(0);} 50%{ opacity:1; transform:scale(1.2) rotate(90deg);} }
+      @keyframes bbGlow{ 0%,100%{ box-shadow:0 0 6px 1px rgba(255,209,102,.45), 0 4px 0 rgba(11,79,134,.25);} 50%{ box-shadow:0 0 18px 5px rgba(255,209,102,.8), 0 4px 0 rgba(11,79,134,.25);} }
+      @media (prefers-reduced-motion: reduce){ .bb-title,.bb-emblem,.bb-words span::after,.bb-spark,.bb-tag{ animation:none !important; } .bb-spark{ opacity:.8; } }
+</style>
   </head>
   <body>
     <div class="sea-decor" aria-hidden="true">
@@ -375,8 +396,25 @@
 
       <!-- ================= SETUP ================= -->
       <section id="screen-setup" class="setup2">
-        <div class="s-head"><h1>BUG <span class="accent">BUCCANEERS</span></h1>
-        <p class="tagline">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p></div>
+        <div class="s-head"><div class="bb-title" role="heading" aria-level="1" aria-label="Bug Buccaneers">
+          <svg class="bb-emblem" viewBox="0 0 100 100" aria-hidden="true">
+            <g stroke="#3a2200" stroke-width="3" stroke-linecap="round">
+              <path d="M14 86 L84 16" stroke="#e8eef5" stroke-width="7"/><path d="M86 86 L16 16" stroke="#e8eef5" stroke-width="7"/>
+              <rect x="6" y="78" width="16" height="9" rx="3" fill="#ffb703" transform="rotate(-45 14 82)"/>
+              <rect x="78" y="78" width="16" height="9" rx="3" fill="#ffb703" transform="rotate(45 86 82)"/>
+            </g>
+            <ellipse cx="50" cy="54" rx="21" ry="25" fill="#1d2b3a" stroke="#ffd166" stroke-width="3"/>
+            <circle cx="50" cy="30" r="12" fill="#1d2b3a" stroke="#ffd166" stroke-width="3"/>
+            <path d="M44 20 Q36 8 30 10 M56 20 Q64 8 70 10" fill="none" stroke="#1d2b3a" stroke-width="3" stroke-linecap="round"/>
+            <path d="M29 46 L16 40 M29 56 L13 56 M30 66 L17 74 M71 46 L84 40 M71 56 L87 56 M70 66 L83 74" stroke="#1d2b3a" stroke-width="4" stroke-linecap="round"/>
+            <line x1="50" y1="34" x2="50" y2="78" stroke="#ffd166" stroke-width="2"/>
+            <circle cx="45" cy="29" r="3" fill="#ff5d5d"/><circle cx="55" cy="29" r="3" fill="#ff5d5d"/>
+            <path d="M36 24 Q50 12 64 24 Z" fill="#c1121f" stroke="#3a2200" stroke-width="2"/>
+          </svg>
+          <div class="bb-words"><span class="bb-l1" data-t="BUG">BUG</span><span class="bb-l2" data-t="BUCCANEERS">BUCCANEERS</span></div>
+          <i class="bb-spark s1"></i><i class="bb-spark s2"></i><i class="bb-spark s3"></i><i class="bb-spark s4"></i>
+        </div>
+        <p class="tagline bb-tag">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p></div>
         <div class="s-milo"><div class="mascot"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true">
   <!-- captain coat -->
   <path d="M13 64 L17 49 Q32 43 47 49 L51 64 Z" fill="#14406b"/>
