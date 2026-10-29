@@ -188,7 +188,7 @@
       button.cell:active{ transform:scale(.92); }
       .cell.ship{ background:linear-gradient(180deg, var(--ship), var(--ship2)); border-color:#fff3bf; }
       .cell.ship::after{ content:""; width:6px; height:6px; border-radius:50%; background:rgba(91,58,0,.45); position:absolute; }
-      .cell.miss{ color:#0b6fa8; font-size:19px; animation:splashIn .45s ease both; }
+      .cell.miss{ background:linear-gradient(180deg,#e5385b,#b30f33); border-color:#ffd7dd; color:#ffffff; font-size:20px; animation:splashIn .45s ease both; }
       .cell.hit{ background:linear-gradient(180deg,#ff8fa3,#ef476f); border-color:#ffd7dd; color:#ffffff; animation:splashIn .45s ease both; }
       .cell.hit.ship::after{ display:none; }
       .cell.sunk{ background:linear-gradient(180deg,#ffb703,#fb8500); border-color:#fff3bf; color:#5b3a00; animation:splashIn .5s ease both; }
@@ -229,7 +229,8 @@
       .markrow.ships{ grid-template-columns:1fr 1fr; }
       .markrow .btn{ min-height:52px; font-size:15px; padding:10px 6px; }
       #mk-miss{ border-color:var(--cyan); } #mk-hit{ border-color:var(--red); } #mk-sunk{ border-color:var(--orange); background:#ffe9a8; }
-      .cell.pending{ box-shadow:inset 0 0 0 3px var(--orange); border-color:var(--orange); }
+      .cell.pending{ background:linear-gradient(180deg,#dc143c,#8f0e28) !important; border-color:#ffffff; color:#ffffff; box-shadow:inset 0 0 0 3px rgba(255,255,255,.85), 0 0 0 2px #dc143c; }
+      .cell.pending::after{ content:"✕"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:800; color:#ffffff; text-shadow:0 1px 2px rgba(0,0,0,.45); z-index:5; }
       .cell .frag{ display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
       .ship-art{ position:absolute; z-index:4; pointer-events:none; transform:rotate(var(--rot,0deg)); }
       .ship-art svg{ width:100%; height:100%; display:block; overflow:visible; }
@@ -2445,7 +2446,7 @@ println!("{}", total);`,
       function newGameState(match){
         return {
           match: match, round: 1, phase: "race",
-          order: [], orderPos: 0, challenge: null,
+          order: [], orderPos: 0, challenge: null, challengeIndex: null,
           finder: null,        // 'me' | 'opp'
           finderCorrect: null, // bool
           pickedLine: null,
@@ -2469,6 +2470,7 @@ println!("{}", total);`,
         nextChallenge();
       }
       function nextChallenge(){
+        stopVoice(); // a new round silences the previous lesson — recorded clip and TTS alike
         const bank = BANKS[setup.lang][setup.level];
         if (G.orderPos >= G.order.length){
           // reshuffle and cycle — same stream on both phones
@@ -2478,7 +2480,8 @@ println!("{}", total);`,
           }
           G.orderPos = 0;
         }
-        G.challenge = bank[G.order[G.orderPos]];
+        G.challengeIndex = G.order[G.orderPos];
+        G.challenge = bank[G.challengeIndex];
         G.orderPos++;
         G.finder = null; G.finderCorrect = null; G.pickedLine = null; G.shooter = null; G.pendingShot = null;
         G.phase = "race";
@@ -2585,7 +2588,7 @@ println!("{}", total);`,
         if ($("screen-game").classList.contains("hidden")) return;
         if ($("overlay").classList.contains("show")) return; // a shot result is on screen — nothing is ticking
         soloPaused = true;
-        pauseState = { raceRemaining: null, explainActive: false, aiPending: false, aiRemaining: 0, audioSuspended: false, voicePaused: false };
+        pauseState = { raceRemaining: null, explainActive: false, aiPending: false, aiRemaining: 0, audioSuspended: false, voicePaused: false, recordedPaused: false };
         // 1) Sonar race — remember the exact milliseconds Barnaclebeard had left
         if (raceTimer && G.raceEndsAt){
           pauseState.raceRemaining = Math.max(0, G.raceEndsAt - Date.now());
@@ -2607,8 +2610,13 @@ println!("{}", total);`,
           AC.ctx.suspend();
           pauseState.audioSuspended = true;
         }
-        // 5) Captain's voice — if Milo is mid-explanation, hold his words too
-        if (voiceOn && voiceOK){
+        // 5) Captain's voice — if Milo is mid-explanation, hold his words too.
+        //    A playing recorded clip pauses on its <audio> element; device TTS
+        //    pauses on speechSynthesis. Only one is ever playing at a time.
+        if (typeof recordedOn !== "undefined" && recordedOn && typeof miloAudio !== "undefined" && miloAudio && !miloAudio.paused){
+          miloAudio.pause();
+          pauseState.recordedPaused = true;
+        } else if (voiceOn && voiceOK){
           window.speechSynthesis.pause();
           pauseState.voicePaused = true;
         }
@@ -2641,7 +2649,12 @@ println!("{}", total);`,
         if (saved && saved.audioSuspended && typeof AC !== "undefined" && AC && AC.ctx && AC.ctx.state === "suspended"){
           AC.ctx.resume();
         }
-        // …and Captain Milo picks his explanation back up mid-sentence
+        // …and Captain Milo picks his explanation back up mid-sentence —
+        //    recorded clip resumes from the exact second it paused at
+        if (saved && saved.recordedPaused && typeof recordedOn !== "undefined" && recordedOn && typeof miloAudio !== "undefined" && miloAudio){
+          const rp = miloAudio.play();
+          if (rp && rp.catch) rp.catch(() => { if (recordedOn) handleRecordedError(); });
+        }
         if (saved && saved.voicePaused && voiceOn && voiceOK) window.speechSynthesis.resume();
       }
 
@@ -2780,22 +2793,100 @@ println!("{}", total);`,
 
       /* ============ CAPTAIN'S VOICE — Milo explains the code out loud ============
          The reading part of every round is the Captain's Log: the fault, the
-         splash it makes, the golden fix and the secret treasure. This voice
-         narrates that exact panel — including the buggy line itself and the
-         fixed line, with code symbols spoken as words ("==" becomes "equals",
-         "=" becomes "gets") — and rings the section of the log being read in
-         gold, so young pirates can follow along with eyes AND ears together.
-         The words are picked at runtime from the round's challenge, so the
-         narration uses the device's own speech voice. One tap starts it, one
-         tap stops it; pausing the solo game holds it mid-sentence, and
-         muting, leaving the panel or switching apps silences it — a polite
-         captain never talks over anyone. */
+         splash it makes, the golden fix and the secret treasure.
+         PRIMARY (Python): a real recorded narration by Captain Milo — a
+         performed lesson written for the ear, in the voice Uday picked —
+         played from audio/python/<language>-<level>-<index>.mp3, where the
+         index is the challenge's position in its bank (G.challengeIndex,
+         stored at deal time from G.order). The files live alongside this
+         page (GitHub Pages / app assets); they are never embedded here.
+         FALLBACK: if a recorded clip fails to load or play — or the language
+         has no recordings yet — the device text-to-speech narration below
+         takes over, reading the log panel (code symbols spoken as words:
+         "==" becomes "equals", "=" becomes "gets") and ringing each section
+         in gold as it reads, so the button never dead-ends.
+         One tap starts, one tap stops; solo ⏸ PAUSE holds whichever voice
+         is playing and RESUME picks it back up; muting, a new round,
+         firing, leaving the panel or switching apps silences it. */
       const voiceOK = ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
       let voiceOn = false;
       let voiceChunks = [];
       let voiceIdx = 0;
       let voiceSession = 0; // bumped on every start/stop so stale utterance callbacks can't skip ahead
       let miloVoice = null;
+      /* Recorded narration state — one reusable <audio> element for all clips. */
+      let voiceMode = null; // "recorded" | "tts" | null
+      let miloAudio = null;
+      let recordedOn = false;
+      let recordedKey = "";
+      let recordedStopping = false; // true while stopVoice() is tearing a clip down, so its error event can't trigger the fallback
+      function narrationKey(){
+        if (!G || G.challengeIndex === null || G.challengeIndex === undefined) return null;
+        return setup.lang + "-" + setup.level + "-" + G.challengeIndex;
+      }
+      function getMiloAudio(){
+        if (miloAudio) return miloAudio;
+        miloAudio = new Audio();
+        miloAudio.preload = "auto";
+        miloAudio.addEventListener("ended", () => {
+          if (!recordedOn) return;
+          recordedOn = false; voiceOn = false; voiceMode = null;
+          clearVoiceMarks(); updateVoiceBtn();
+        });
+        miloAudio.addEventListener("error", () => {
+          if (recordedOn && !recordedStopping) handleRecordedError();
+        }, true);
+        return miloAudio;
+      }
+      /* A clip can fail twice over (the element's error event AND the play()
+         promise) — route by the src that actually failed, so one failure
+         advances exactly one step: page-level audio/ path first, then the
+         copy bundled inside this artifact's assets/, then device TTS. */
+      function handleRecordedError(){
+        if (!recordedOn || recordedStopping || !miloAudio) return;
+        const cur = miloAudio.getAttribute("src") || "";
+        if (cur.indexOf("assets/") === 0){ fallbackToTTS(); return; }
+        const a = getMiloAudio();
+        const src = "assets/audio/python/" + recordedKey + ".mp3";
+        a.src = src;
+        const p = a.play();
+        if (p && p.catch) p.catch(() => {
+          if (recordedOn && !recordedStopping && (a.getAttribute("src") || "") === src) fallbackToTTS();
+        });
+      }
+      function startRecorded(key){
+        voiceSession++; // invalidate any stale TTS chunk callbacks
+        const a = getMiloAudio();
+        recordedKey = key;
+        recordedStopping = false;
+        recordedOn = true;
+        voiceOn = true;
+        voiceMode = "recorded";
+        voiceChunks = []; voiceIdx = 0;
+        clearVoiceMarks();
+        const titleEl = document.getElementById("exp-title");
+        if (titleEl) titleEl.classList.add("voicing");
+        a.src = "audio/python/" + key + ".mp3";
+        updateVoiceBtn();
+        const src = a.src;
+        const p = a.play();
+        if (p && p.catch) p.catch(() => {
+          // Only act if this attempt is still the current one (a stale
+          // rejection after the assets copy took over must not kill it).
+          if (recordedOn && !recordedStopping && a.src === src) handleRecordedError();
+        });
+      }
+      function fallbackToTTS(){
+        // The recorded clip would not load/play — hand the lesson to the
+        // device voice so the listen button always explains the bug.
+        recordedOn = false;
+        voiceMode = null;
+        recordedStopping = true;
+        if (miloAudio){ try { miloAudio.pause(); miloAudio.removeAttribute("src"); miloAudio.load(); } catch (e) {} }
+        recordedStopping = false;
+        clearVoiceMarks();
+        startTTS();
+      }
       function pickMiloVoice(){
         if (!voiceOK) return;
         const vs = window.speechSynthesis.getVoices();
@@ -2893,11 +2984,21 @@ println!("{}", total);`,
         window.speechSynthesis.speak(u);
       }
       function startVoice(){
-        if (!voiceOK || !G || !G.challenge) return;
+        if (!G || !G.challenge) return;
+        // Python sails with Milo's real recorded voice first.
+        if (setup.lang === "python"){
+          const key = narrationKey();
+          if (key){ startRecorded(key); return; }
+        }
+        startTTS();
+      }
+      function startTTS(){
+        if (!voiceOK){ voiceOn = false; voiceMode = null; updateVoiceBtn(); return; }
         window.speechSynthesis.cancel();
         voiceChunks = buildNarration();
         voiceIdx = 0;
         voiceOn = true;
+        voiceMode = "tts";
         const sess = ++voiceSession;
         updateVoiceBtn();
         speakNextChunk(sess);
@@ -2905,6 +3006,13 @@ println!("{}", total);`,
       function stopVoice(){
         voiceSession++;
         if (voiceOK) window.speechSynthesis.cancel();
+        if (miloAudio){
+          recordedStopping = true;
+          try { miloAudio.pause(); miloAudio.currentTime = 0; } catch (e) {}
+          recordedStopping = false;
+        }
+        recordedOn = false;
+        voiceMode = null;
         voiceOn = false;
         voiceChunks = [];
         voiceIdx = 0;
@@ -2928,7 +3036,9 @@ println!("{}", total);`,
         else verdict = '<div class="verdict good">🎉 PLOT TWIST! Your rival picked the wrong line — the shot is YOURS! Here\'s where that rascal bug was hiding all along:</div>';
 
         const fixHtml = ch.x.split("\n").map(l => highlightLine(l, setup.lang)).join("<br />");
-        const listenBtn = voiceOK
+        // Python always gets the button (recorded Milo needs no device voice);
+        // other languages show it when the TTS fallback voice is available.
+        const listenBtn = (voiceOK || setup.lang === "python")
           ? '<button class="btn listen" id="btn-listen" type="button" aria-pressed="false">🔊 HEAR CAPTAIN MILO EXPLAIN IT!</button>'
           : "";
         $("explain-area").innerHTML =
@@ -2945,7 +3055,7 @@ println!("{}", total);`,
 
         explainLeft = 3;
         startExplainCountdown();
-        if (voiceOK) addTap($("btn-listen"), toggleVoice);
+        if ($("btn-listen")) addTap($("btn-listen"), toggleVoice);
         addTap($("btn-continue"), () => {
           stopVoice();
           stopExplainTimer();
@@ -2984,7 +3094,7 @@ println!("{}", total);`,
             const artShip = showShips && ship; // this cell is covered by the ship-art overlay
             let cls = "cell", txt = "";
             if (ship && (showShips || res === "sunk")) cls += " ship";
-            if (res === "miss"){ cls += " miss"; txt = "·"; }
+            if (res === "miss"){ cls += " miss"; txt = "✕"; }
             if (res === "hit"){ if (!artShip){ cls += " hit"; txt = fragSVG(); } }
             if (res === "sunk"){ if (!artShip){ cls += " sunk"; txt = fragSVG(); } }
             if (G && G.pendingShot === idx && !showShips) cls += " pending";
