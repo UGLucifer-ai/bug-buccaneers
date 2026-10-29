@@ -2882,15 +2882,17 @@ println!("{}", total);`,
       /* ============ CAPTAIN'S VOICE — Milo explains the code out loud ============
          The reading part of every round is the Captain's Log: the fault, the
          splash it makes, the golden fix and the secret treasure.
-         PRIMARY (Python): a real recorded narration by Captain Milo — a
-         performed lesson written for the ear, in the voice Uday picked —
-         played from audio/python/<language>-<level>-<index>.mp3, where the
-         index is the challenge's position in its bank (G.challengeIndex,
-         stored at deal time from G.order). The files live alongside this
-         page (GitHub Pages / app assets); they are never embedded here.
-         FALLBACK: if a recorded clip fails to load or play — or the language
-         has no recordings yet — the device text-to-speech narration below
-         takes over, reading the log panel (code symbols spoken as words:
+         PRIMARY (all 12 languages): a real recorded narration by Captain
+         Milo — a performed lesson written for the ear, in the voice Uday
+         picked — played from audio/<language>/<language>-<level>-<index>.mp3,
+         where the index is the challenge's position in its bank
+         (G.challengeIndex, stored at deal time from G.order). The files
+         live alongside this page (GitHub Pages / app assets); they are
+         never embedded here.
+         FALLBACK: if a recorded clip fails to load or play, the copy
+         bundled in assets/audio/<language>/ is tried next, and if that
+         fails too the device text-to-speech narration below takes over,
+         reading the log panel (code symbols spoken as words:
          "==" becomes "equals", "=" becomes "gets") and ringing each section
          in gold as it reads, so the button never dead-ends.
          One tap starts, one tap stops; solo ⏸ PAUSE holds whichever voice
@@ -2935,7 +2937,7 @@ println!("{}", total);`,
         const cur = miloAudio.getAttribute("src") || "";
         if (cur.indexOf("assets/") === 0){ fallbackToTTS(); return; }
         const a = getMiloAudio();
-        const src = "assets/audio/python/" + recordedKey + ".mp3";
+        const src = "assets/audio/" + setup.lang + "/" + recordedKey + ".mp3";
         a.src = src;
         const p = a.play();
         if (p && p.catch) p.catch(() => {
@@ -2954,7 +2956,7 @@ println!("{}", total);`,
         clearVoiceMarks();
         const titleEl = document.getElementById("exp-title");
         if (titleEl) titleEl.classList.add("voicing");
-        a.src = "audio/python/" + key + ".mp3";
+        a.src = "audio/" + setup.lang + "/" + key + ".mp3";
         updateVoiceBtn();
         const src = a.src;
         const p = a.play();
@@ -3073,11 +3075,9 @@ println!("{}", total);`,
       }
       function startVoice(){
         if (!G || !G.challenge) return;
-        // Python sails with Milo's real recorded voice first.
-        if (setup.lang === "python"){
-          const key = narrationKey();
-          if (key){ startRecorded(key); return; }
-        }
+        // Every language sails with Milo's real recorded voice first.
+        const key = narrationKey();
+        if (key){ startRecorded(key); return; }
         startTTS();
       }
       function startTTS(){
@@ -3124,11 +3124,10 @@ println!("{}", total);`,
         else verdict = '<div class="verdict good">🎉 PLOT TWIST! Your rival picked the wrong line — the shot is YOURS! Here\'s where that rascal bug was hiding all along:</div>';
 
         const fixHtml = ch.x.split("\n").map(l => highlightLine(l, setup.lang)).join("<br />");
-        // Python always gets the button (recorded Milo needs no device voice);
-        // other languages show it when the TTS fallback voice is available.
-        const listenBtn = (voiceOK || setup.lang === "python")
-          ? '<button class="btn listen" id="btn-listen" type="button" aria-pressed="false">🔊 HEAR CAPTAIN MILO EXPLAIN IT!</button>'
-          : "";
+        // The button always shows, for every language: recorded Milo clips
+        // are the primary narration everywhere, and the device voice stays
+        // as the last-resort fallback if a clip cannot load or play.
+        const listenBtn = '<button class="btn listen" id="btn-listen" type="button" aria-pressed="false">🔊 HEAR CAPTAIN MILO EXPLAIN IT!</button>';
         $("explain-area").innerHTML =
           '<div class="explain">' + verdict +
           '<div id="exp-title"><h3>📜 Captain\'s Log: The Bug, Explained!</h3>' +
