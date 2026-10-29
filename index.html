@@ -40,18 +40,20 @@
           linear-gradient(180deg, #8fd8ff 0%, #bdeafd 34%, #6fc6f2 68%, #2f9be8 100%);
         min-height:100vh;
       }
-      .wrap{ max-width:560px; margin:0 auto; padding:18px 14px 48px; }
-      h1{ font-size:clamp(30px,8vw,42px); font-weight:800; letter-spacing:.02em; margin:6px 0 2px; line-height:1.05; color:#0b4f86; text-shadow:0 2px 0 rgba(255,255,255,.7); }
+      .wrap{ max-width:560px; margin:0 auto; padding:18px 14px 48px; position:relative; z-index:1; }
+      h1{ font-size:clamp(38px,11vw,54px); font-weight:800; letter-spacing:.02em; margin:4px 0 6px; line-height:1.02; color:#0b4f86; text-shadow:0 3px 0 rgba(255,255,255,.75), 0 8px 0 rgba(11,79,134,.10); padding-bottom:16px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8' viewBox='0 0 40 8'%3E%3Cpath d='M0 4 Q10 0 20 4 T40 4' fill='none' stroke='%23219ebc' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x bottom left; }
       h1 .accent{ color:var(--orange); }
-      .tagline{ color:#14507e; font-size:16px; margin:0 0 16px; line-height:1.55; font-weight:600; }
-      .mascot{ display:flex; gap:12px; align-items:center; background:#fff7d6; border:3px dashed var(--orange); border-radius:20px; padding:12px 14px; margin-bottom:14px; box-shadow:0 6px 0 rgba(11,79,134,.12); }
-      .mascot svg{ flex:0 0 64px; }
-      .mascot p{ margin:0; font-size:14.5px; line-height:1.55; font-weight:600; color:#5b3a00; }
+      .tagline{ color:#14507e; font-size:18px; margin:0 0 16px; line-height:1.45; font-weight:800; }
+      .mascot{ position:relative; display:flex; gap:12px; align-items:center; background:#fff7d6; border:3px solid var(--orange); border-radius:20px; padding:12px 14px; margin-bottom:20px; box-shadow:0 6px 0 rgba(11,79,134,.12); }
+      .mascot::after{ content:""; position:absolute; left:44px; bottom:-13px; width:22px; height:22px; background:#fff7d6; border-right:3px solid var(--orange); border-bottom:3px solid var(--orange); transform:rotate(45deg) skew(12deg,12deg); border-bottom-right-radius:6px; }
+      .mascot svg{ flex:0 0 64px; animation:bob 3s ease-in-out infinite; }
+      @keyframes bob{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-5px) rotate(2deg);} }
+      .mascot p{ margin:0; font-size:16px; line-height:1.5; font-weight:700; color:#5b3a00; }
       .mascot p b{ color:#0b4f86; }
       .panel{
         background:linear-gradient(180deg, #ffffff, var(--panel2));
-        border:3px solid #ffffff; border-radius:22px; padding:16px; margin-bottom:14px;
-        box-shadow:0 8px 0 rgba(11,79,134,.14);
+        border:4px solid #ffffff; border-radius:26px; padding:16px; margin-bottom:14px;
+        box-shadow:0 10px 0 rgba(11,79,134,.16), inset 0 0 0 2px rgba(124,195,238,.35);
       }
       .panel h2{ font-size:13px; letter-spacing:.14em; color:var(--cyan); margin:0 0 10px; font-weight:800; }
       .howto{ counter-reset:step; list-style:none; margin:0; padding:0; }
@@ -63,6 +65,18 @@
         background:var(--sun); border:2px solid var(--orange); color:#5b3a00; display:flex; align-items:center; justify-content:center;
         font-size:15px; font-weight:800;
       }
+      .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:2px 0 4px; }
+      @media (max-width:380px){ .steps{ grid-template-columns:repeat(2,1fr); } }
+      .steps .tile{ border:3px solid #ffffff; border-radius:18px; padding:10px 4px 9px; text-align:center; font-size:12.5px; font-weight:800; line-height:1.3; color:#0b4f86; box-shadow:0 5px 0 rgba(11,79,134,.15); animation:popIn .45s cubic-bezier(.2,1.6,.4,1) both; }
+      .steps .tile .ic{ display:block; font-size:31px; line-height:1.15; margin-bottom:3px; }
+      .steps .tile:nth-child(1){ background:#ffe3ec; animation-delay:.02s; }
+      .steps .tile:nth-child(2){ background:#d3f9e8; animation-delay:.09s; }
+      .steps .tile:nth-child(3){ background:#fff3bf; animation-delay:.16s; }
+      .steps .tile:nth-child(4){ background:#d6f2fb; animation-delay:.23s; }
+      @keyframes popIn{ from{ transform:scale(.6); opacity:0;} to{ transform:scale(1); opacity:1;} }
+      .fullorders{ margin-top:12px; background:rgba(255,255,255,.65); border:2px dashed var(--line2); border-radius:16px; padding:10px 12px; }
+      .fullorders summary{ cursor:pointer; font-weight:800; font-size:14.5px; color:#0b6fa8; padding:4px 2px; }
+      .fullorders summary:active{ transform:scale(.98); }
       .recipe{ margin-top:12px; font-size:14px; line-height:1.6; color:#5b3a00; font-weight:700; background:#fff3bf; border:2px solid var(--sun); border-radius:14px; padding:10px 12px; }
       label.flabel{ display:block; font-size:12px; letter-spacing:.12em; color:var(--dim); margin:16px 0 8px; font-weight:800; }
       label.flabel:first-child{ margin-top:0; }
@@ -88,7 +102,7 @@
       }
       .seg button small{ display:block; font-size:11.5px; font-weight:600; color:var(--faint); margin-top:3px; line-height:1.35; }
       .seg button:active{ transform:scale(.97); }
-      .seg button.sel{ border-color:var(--orange); color:var(--ink); background:#ffe9a8; box-shadow:inset 0 0 0 2px var(--orange); }
+      .seg button.sel{ border-color:var(--orange); color:var(--ink); background:#ffe9a8; box-shadow:inset 0 0 0 2px var(--orange), 0 4px 0 rgba(180,83,9,.35); transform:scale(1.04); }
       .seg button.sel small{ color:var(--dim); }
       .btn{
         font-family:var(--fun); border-radius:999px; border:2px solid var(--line2); background:#ffffff; color:var(--ink);
@@ -98,6 +112,8 @@
       .btn:active{ transform:scale(.98) translateY(2px); box-shadow:0 2px 0 rgba(11,79,134,.18); }
       .btn.primary{ background:linear-gradient(180deg, var(--sun), var(--orange)); border-color:#d97706; color:#4a2c00; width:100%; font-size:19px; margin-top:18px; box-shadow:0 5px 0 #b45309; }
       .btn.primary:hover{ filter:brightness(1.05); }
+      #btn-start, #btn-ready{ animation:startPulse 2.2s ease-in-out infinite; }
+      @keyframes startPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.025);} }
       .btn.ghost{ background:rgba(255,255,255,.75); }
       .btn.small{ min-height:44px; padding:8px 14px; font-size:13.5px; font-weight:700; }
       .btn:disabled{ opacity:.5; cursor:not-allowed; }
@@ -150,7 +166,7 @@
       .codeline.wrongpick{ background:rgba(239,71,111,.28); box-shadow:inset 4px 0 0 #ff8fa3; }
       .tk-k{ color:#7dd3fc; } .tk-s{ color:#ffd479; } .tk-n{ color:#ffb38a; } .tk-c{ color:#9fd3b4; font-style:italic; } .tk-f{ color:#2ee6a8; }
 
-      .explain{ border:3px solid var(--sun); background:linear-gradient(180deg, #fffbe8, #fff3bf); border-radius:22px; padding:16px; margin-bottom:14px; animation:fadeUp .3s ease both; box-shadow:0 8px 0 rgba(180,83,9,.15); }
+      .explain{ border:3px dashed #d97706; background-color:#fff6d8; background-image:radial-gradient(rgba(217,119,6,.10) 1.5px, transparent 1.7px), linear-gradient(180deg, #fffbe8, #ffedb5); background-size:22px 22px, 100% 100%; border-radius:22px; padding:16px; margin-bottom:14px; animation:fadeUp .3s ease both; box-shadow:0 8px 0 rgba(180,83,9,.18); }
       .explain h3{ margin:0 0 2px; font-size:19px; color:#0b4f86; }
       .explain .bugname{ font-size:11.5px; letter-spacing:.12em; color:var(--dim); margin-bottom:12px; font-weight:800; }
       .explain h4{ font-size:12px; letter-spacing:.12em; color:var(--cyan); margin:14px 0 5px; font-weight:800; }
@@ -167,7 +183,7 @@
       .explain .voicing{ box-shadow:0 0 0 3px var(--cyan), 0 0 0 7px rgba(255,183,3,.5); border-radius:10px; }
       .explain p.voicing{ background:rgba(56,182,217,.14); }
 
-      .board-title{ display:flex; justify-content:space-between; align-items:baseline; margin:0 0 8px; gap:8px; }
+      .board-title{ display:flex; justify-content:space-between; align-items:baseline; margin:0 0 8px; gap:8px; background:linear-gradient(90deg, rgba(33,158,188,.22), rgba(165,220,247,.45), rgba(33,158,188,.22)); border-radius:12px; padding:7px 9px; }
       .board-title h3{ font-size:13px; letter-spacing:.1em; margin:0; font-weight:800; }
       .board-title .hint{ font-size:12px; color:var(--dim); font-weight:700; text-align:right; }
       #board-enemy-wrap h3{ color:#a61e4d; }
@@ -235,7 +251,15 @@
       .ship-art{ position:absolute; z-index:4; pointer-events:none; transform:rotate(var(--rot,0deg)); }
       .ship-art svg{ width:100%; height:100%; display:block; overflow:visible; }
       .ship-art.sunk{ opacity:.78; filter:saturate(.25) brightness(.82); transform:rotate(calc(var(--rot,0deg) - 7deg)) translateY(3px); }
-      .sound-toggle{ position:fixed; top:10px; right:10px; z-index:80; width:56px; height:56px; border-radius:50%; border:3px solid #ffffff; background:linear-gradient(180deg, var(--sun), var(--orange)); font-size:26px; line-height:1; cursor:pointer; box-shadow:0 5px 0 rgba(11,79,134,.35); touch-action:manipulation; }
+      .sound-row{ display:flex; align-items:center; justify-content:flex-end; gap:8px; margin:0 0 4px; }
+      .sound-row .sound-label{ font-size:11px; letter-spacing:.18em; font-weight:800; color:#0b4f86; background:rgba(255,255,255,.8); border:2px solid #ffffff; padding:5px 11px; border-radius:999px; box-shadow:0 3px 0 rgba(11,79,134,.15); }
+      .sound-toggle{ position:static; width:48px; height:48px; border-radius:50%; border:3px solid #ffffff; background:linear-gradient(180deg, var(--sun), var(--orange)); font-size:22px; line-height:1; cursor:pointer; box-shadow:0 4px 0 rgba(11,79,134,.35); touch-action:manipulation; }
+      .sea-decor{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+      .sea-decor .bubble{ position:absolute; bottom:-50px; border-radius:50%; border:2px solid rgba(255,255,255,.8); background:rgba(255,255,255,.16); opacity:0; animation:rise linear infinite; }
+      @keyframes rise{ 0%{ transform:translateY(0) translateX(0); opacity:0; } 12%{ opacity:.85; } 88%{ opacity:.55; } 100%{ transform:translateY(-108vh) translateX(16px); opacity:0; } }
+      .sea-decor .sea-wave{ position:absolute; left:0; bottom:0; width:200%; height:26px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='26' viewBox='0 0 120 26'%3E%3Cpath d='M0 13 Q30 3 60 13 T120 13 V26 H0 Z' fill='rgba(255,255,255,0.35)'/%3E%3C/svg%3E") repeat-x; background-size:120px 26px; animation:waveSlide 9s linear infinite; }
+      .sea-decor .sea-wave.w2{ bottom:9px; opacity:.5; animation-duration:15s; animation-direction:reverse; }
+      @keyframes waveSlide{ from{ transform:translateX(0); } to{ transform:translateX(-120px); } }
       .sound-toggle:active{ transform:scale(.94); }
       .sound-toggle.muted{ background:#dbe9f4; filter:grayscale(.5); }
       #btn-pause{ background:#fff3bf; border-color:var(--orange); color:#5b3a00; box-shadow:0 4px 0 rgba(180,83,9,.35); }
@@ -252,16 +276,35 @@
     </style>
   </head>
   <body>
+    <div class="sea-decor" aria-hidden="true">
+      <span class="bubble" style="left:6%; width:16px; height:16px; animation-duration:19s; animation-delay:0s;"></span>
+      <span class="bubble" style="left:22%; width:10px; height:10px; animation-duration:15s; animation-delay:4s;"></span>
+      <span class="bubble" style="left:47%; width:22px; height:22px; animation-duration:24s; animation-delay:2s;"></span>
+      <span class="bubble" style="left:66%; width:12px; height:12px; animation-duration:17s; animation-delay:7s;"></span>
+      <span class="bubble" style="left:82%; width:18px; height:18px; animation-duration:21s; animation-delay:1s;"></span>
+      <span class="bubble" style="left:93%; width:9px; height:9px; animation-duration:14s; animation-delay:9s;"></span>
+      <span class="sea-wave"></span>
+      <span class="sea-wave w2"></span>
+    </div>
     <div class="wrap">
+      <div class="sound-row"><span class="sound-label">SOUND</span><button class="sound-toggle" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊</button></div>
 
       <!-- ================= SETUP ================= -->
       <section id="screen-setup">
         <h1>DEBUG <span class="accent">BATTLESHIP</span></h1>
-        <p class="tagline">🏴‍☠️ <b>Bug Hunt on the High Seas!</b> Two pirate crews. One legendary treasure. A whole ocean of sneaky bugs! Race across Gigglewave Bay, out-think the code, out-shout your rival — first crew to sink the other fleet grabs the <b>Starlight Hoard</b>!</p>
-        <div class="mascot"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="36" r="20" fill="#ffd9b3"/><path d="M12 30a20 20 0 0 1 40 0l0 4-40 0z" fill="#06b6a0"/><circle cx="32" cy="13" r="4" fill="#ffb703"/><rect x="10" y="30" width="44" height="5" rx="2.5" fill="#0a8f7d"/><circle cx="25" cy="38" r="2.6" fill="#173a5e"/><circle cx="39" cy="38" r="2.6" fill="#173a5e"/><path d="M25 46q7 6 14 0" stroke="#173a5e" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M22 56l10-5 10 5-4 6h-12z" fill="#fb8500"/></svg><p><b>Ahoy, matey! I'm Captain Milo</b> of the good ship Golden Gull — the giggliest captain on Gigglewave Bay! Join me crew: hunt the bug, blast the cannon, beat the rival pirates to the Starlight Hoard. Fair winds and sharp eyes — let's go treasure hunting!</p></div>
+        <p class="tagline">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p>
+        <div class="mascot"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="36" r="20" fill="#ffd9b3"/><path d="M12 30a20 20 0 0 1 40 0l0 4-40 0z" fill="#06b6a0"/><circle cx="32" cy="13" r="4" fill="#ffb703"/><rect x="10" y="30" width="44" height="5" rx="2.5" fill="#0a8f7d"/><circle cx="25" cy="38" r="2.6" fill="#173a5e"/><circle cx="39" cy="38" r="2.6" fill="#173a5e"/><path d="M25 46q7 6 14 0" stroke="#173a5e" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M22 56l10-5 10 5-4 6h-12z" fill="#fb8500"/></svg><p><b>Ahoy! I'm Captain Milo</b> of the Golden Gull. Ready to hunt some bugs, Captain?</p></div>
 
         <div class="panel">
-          <h2>⚓ THE CAPTAIN'S ORDERS — HOW TO PLAY</h2>
+          <h2>⚓ HOW TO PLAY — EASY AS 1·2·3·4!</h2>
+          <div class="steps">
+            <div class="tile"><span class="ic">📞</span>Call yer crew</div>
+            <div class="tile"><span class="ic">🎯</span>Same code, same map</div>
+            <div class="tile"><span class="ic">🔍</span>Spot the bug first</div>
+            <div class="tile"><span class="ic">💥</span>Fire the cannons!</div>
+          </div>
+          <details class="fullorders">
+            <summary>📜 The Captain's full orders — tap to read</summary>
           <ol class="howto" id="howto-crew">
             <li>Both pirates open this game on their own phones or tablets. Two screens, one adventure!</li>
             <li>On your call, agree your battle plan: enter the <b>same secret crew code</b>, pick the <b>same language</b> — Python, JavaScript, Java, C++, SQL, C, C#, TypeScript, Go, PHP, Ruby or Rust — and the <b>same level</b>, but choose <b>opposite pirate numbers</b>. No peeking at each other's maps!</li>
@@ -278,26 +321,27 @@
             <li>Too slow, or a wrong line? Barnaclebeard steals the shot and fires at YOUR fleet all by himself. First to sink the whole rival fleet grabs the Starlight Hoard!</li>
             <li>Need a breather mid-battle? Tap <b>⏸ PAUSE</b> at the top of the battle screen — Barnaclebeard's sonar freezes, his cannons wait, and the music hushes. Nothing moves until you tap <b>RESUME</b>. Take all the time you need, Captain!</li>
           </ol>
-          <div class="recipe" id="recipe-crew">🏴‍☠️ THE GOLDEN CREW RULES — same secret code + same language + same level + opposite pirates. If even ONE is different, your treasure maps won't match and the adventure falls apart!</div>
-          <div class="recipe hidden" id="recipe-solo">🦜 SOLO SAILOR'S RULE — wilder seas mean a faster Barnaclebeard! Novice seas give you heaps of time, but on STORMY Expert seas his sonar zooms — sharp eyes and quick fingers win the Hoard!</div>
+          <div class="recipe" id="recipe-crew">🏴‍☠️ Same code + same language + same level + opposite pirates — match all four, or the maps won't match!</div>
+          <div class="recipe hidden" id="recipe-solo">🦜 Solo rule: wilder seas = a faster Barnaclebeard. Sharp eyes win!</div>
+          </details>
         </div>
 
         <div class="panel">
-          <label class="flabel">🎮 HOW ARE WE SAILING TODAY, CAPTAIN?</label>
+          <label class="flabel">🎮 PLAY MODE</label>
           <div class="seg cols2 seg-mode" id="seg-mode">
-            <button type="button" data-mode="crew" class="sel">👥 JOIN A CREW!<small>2 players · 2 phones · voice call fun!</small></button>
-            <button type="button" data-mode="solo">🏝️ SOLO ADVENTURE!<small>Just you vs the computer pirates!</small></button>
+            <button type="button" data-mode="crew" class="sel">👥 JOIN A CREW!<small>2 players · 2 phones</small></button>
+            <button type="button" data-mode="solo">🏝️ SOLO ADVENTURE!<small>You vs computer pirates</small></button>
           </div>
 
           <div id="room-block">
-          <label class="flabel" for="room-input">🗝️ SECRET CREW CODE — WHISPER IT ON YOUR CALL!</label>
+          <label class="flabel" for="room-input">🗝️ SECRET CREW CODE</label>
           <div class="roomrow">
             <input id="room-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" />
-            <button class="btn small ghost" id="btn-random-code" type="button">🎲 SURPRISE ME, CAPTAIN!</button>
+            <button class="btn small ghost" id="btn-random-code" type="button">🎲 SURPRISE ME!</button>
           </div>
           </div>
 
-          <label class="flabel">💻 PICK YOUR CODE LANGUAGE — CHOOSE YOUR WEAPON!</label>
+          <label class="flabel">💻 LANGUAGE</label>
           <div class="seg cols-lang" id="seg-lang">
             <button type="button" data-lang="python" class="sel">Python</button>
             <button type="button" data-lang="javascript">JavaScript</button>
@@ -313,15 +357,15 @@
             <button type="button" data-lang="rust">Rust</button>
           </div>
 
-          <label class="flabel">🌊 HOW WILD ARE THE WAVES? (HOW TRICKY?)</label>
+          <label class="flabel">🌊 LEVEL</label>
           <div class="seg cols3" id="seg-level">
-            <button type="button" data-level="novice">Novice<small>Calm seas — short code, bugs you can spot with a spyglass!</small></button>
-            <button type="button" data-level="beginner" class="sel">Beginner<small>Breezy seas — trickier bugs hiding in medium code</small></button>
-            <button type="button" data-level="expert">Expert<small>STORMY SEAS — super-sneaky bugs for bold, grown-up pirates!</small></button>
+            <button type="button" data-level="novice">Novice<small>Calm seas</small></button>
+            <button type="button" data-level="beginner" class="sel">Beginner<small>Breezy seas</small></button>
+            <button type="button" data-level="expert">Expert<small>STORMY seas</small></button>
           </div>
 
           <div id="side-block">
-          <label class="flabel">🏴‍☠️ WHICH PIRATE ARE YOU? — YOUR CREW-MATE PICKS THE OTHER ONE!</label>
+          <label class="flabel">🏴‍☠️ WHICH PIRATE ARE YOU?</label>
           <div class="seg cols2" id="seg-side">
             <button type="button" data-side="1" class="sel">⚓ PIRATE 1</button>
             <button type="button" data-side="2">🗺️ PIRATE 2</button>
@@ -363,7 +407,7 @@
         </div>
 
         <div class="panel">
-          <h2 id="log-title">📜 CAPTAIN'S BATTLE LOG — SHOUT EVERY SQUARE ON YOUR CALL!</h2>
+          <h2 id="log-title">📜 BATTLE LOG</h2>
           <ul class="log" id="log"><li class="empty">No cannonballs yet — hunt a bug, earn a shot, make a splash!</li></ul>
         </div>
       </section>
@@ -377,7 +421,7 @@
         </div>
         <div class="panel">
           <p class="phase-title">🗺️ Hide yer ships, Captain — this map is TOP SECRET!</p>
-          <div class="milo"><span class="face">🧭</span><span><b>Captain Milo:</b> A real captain CHOOSES where every ship hides! Tap a ship to grab her, tap the sea to drop her, spin her with ROTATE — and if ye change yer mind, tap a placed ship to pick her right back up. Yer rival will NEVER see this map. No peeking at theirs either, ye scallywag!</span></div>
+          <div class="milo"><span class="face">🧭</span><span><b>Captain Milo:</b> Tap a ship, tap the sea to hide her, spin her with ROTATE. Tap a placed ship to pick her back up — secret map, no peeking!</span></div>
           <div id="fleet-list"></div>
           <div class="claimrow">
             <button class="btn" id="btn-rotate" type="button">🔄 ROTATE SHIP!</button>
@@ -390,7 +434,7 @@
           <div class="board" id="board-place"></div>
         </div>
         <button class="btn primary" id="btn-ready" type="button" disabled>🚀 READY — SET SAIL!</button>
-        <p class="phase-sub" style="text-align:center; margin-top:10px;">The big golden button only wakes up when all 4 ships are hiding on the map!</p>
+        <p class="phase-sub" style="text-align:center; margin-top:10px;">All 4 ships hidden = GO! 🚀</p>
       </section>
     </div>
 
@@ -422,8 +466,6 @@
         </div>
       </div>
     </div>
-
-    <button class="sound-toggle" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊</button>
 
     <div class="toast" id="toast"></div>
 
@@ -2668,7 +2710,7 @@ println!("{}", total);`,
           ? LANG_LABEL[setup.lang] + " · " + LEVEL_LABEL[setup.level] + " · VS " + RIVAL_NAME.toUpperCase() + " 🦜"
           : LANG_LABEL[setup.lang] + " · " + LEVEL_LABEL[setup.level] + " · YOU: PIRATE " + setup.side + " ⚓";
         $("chip-round").textContent = G.round;
-        $("log-title").textContent = isSolo() ? "📜 CAPTAIN'S BATTLE LOG — EVERY SPLASH, RECORDED!" : "📜 CAPTAIN'S BATTLE LOG — SHOUT EVERY SQUARE ON YOUR CALL!";
+        $("log-title").textContent = "📜 BATTLE LOG";
         const ea = G.enemyFleet ? afloat(G.enemyFleet, G.myShots) : SHIP_DEFS.length - G.sunkEnemyShips.size, ma = afloat(G.myFleet, G.shotsOnMe);
         $("stat-enemy").textContent = ea;
         $("stat-mine").textContent = ma;
@@ -2706,8 +2748,8 @@ println!("{}", total);`,
           if (isSolo()){
             area.innerHTML =
               '<div class="panel fadeup"><p class="phase-title">🐛 ROUND ' + G.round + ' — A BUG IS HIDING IN THE CODE! Race ' + RIVAL_NAME + ' to find it!</p>' +
-              miloSays("That barnacle-brained " + RIVAL_NAME + " is hunting this bug too — see his sonar sweep ticking up below? Beat it, matey! " + flavor(MILO_ROUND_INTROS, 0)) +
-              '<p class="phase-sub">This code hides exactly <b>one</b> sneaky bug. The very second you spot it, smash the big golden button, then tap the buggy line — all <b>before Barnaclebeard\'s sonar fills up</b>! Too slow, or a wrong line, and HE fires the cannons. Eyes peeled, detective!</p>' +
+              miloSays(RIVAL_NAME + " is hunting this bug too — beat his sonar, matey! " + flavor(MILO_ROUND_INTROS, 0)) +
+              '<p class="phase-sub">One sneaky bug hides here. Spot it, smash the golden button, tap the buggy line — <b>before the sonar fills up</b>!</p>' +
               '<button class="btn" id="btn-found" type="button" style="width:100%;">🔍 I SPOTTED THE BUG, CAPTAIN!</button>' +
               sonarHtml() + '</div>';
             renderCode(false);
@@ -2717,7 +2759,7 @@ println!("{}", total);`,
             area.innerHTML =
               '<div class="panel fadeup"><p class="phase-title">🐛 ROUND ' + G.round + ' — A BUG IS HIDING IN THE CODE! Race your rival to find it!</p>' +
               miloSays(flavor(MILO_ROUND_INTROS, 0)) +
-              '<p class="phase-sub">This code hides exactly <b>one</b> sneaky bug. The very second you spot it, shout it out on your call and smash the big golden button! But beware — tap the wrong line later and your rival steals the shot. Eyes peeled, detective!</p>' +
+              '<p class="phase-sub">One sneaky bug hides here. Spot it first, shout it on your call, smash the golden button!</p>' +
               '<div class="claimrow"><button class="btn" id="btn-found" type="button">🔍 I SPOTTED THE BUG, CAPTAIN!</button>' +
               '<button class="btn ghost" id="btn-oppfound" type="button">🏴‍☠️ My rival spotted it first!</button></div></div>';
             renderCode(false);
@@ -2729,7 +2771,7 @@ println!("{}", total);`,
           area.innerHTML =
             '<div class="panel fadeup"><p class="phase-title">🎉 YOU SPOTTED IT FIRST! Now tap the line where the bug is hiding!</p>' +
             miloSays(flavor(MILO_PICK_LINES, 1)) +
-            '<p class="phase-sub">Choose carefully — a wrong line hands the cannons to your rival. Deep breath… you\'ve absolutely got this!</p>' +
+            '<p class="phase-sub">Wrong line = rival fires. Choose wisely!</p>' +
             (isSolo() ? sonarHtml() : "") + '</div>';
           renderCode(true);
           if (isSolo()) startRaceTimer();
@@ -2754,8 +2796,8 @@ println!("{}", total);`,
               '<div class="panel fadeup"><p class="phase-title">💣 FIRE THE CANNONS! It\'s YOUR shot, Captain!</p>' +
               miloSays(flavor(MILO_FIRE_LINES, 2)) +
               '<p class="phase-sub">' + (isSolo()
-                ? "Tap a square on the RIVAL SHIPS board below and send that cannonball FLYING at Barnaclebeard's fleet!"
-                : "Tap a square on the RIVAL SHIPS chart below to pick yer target — then <b>SHOUT yer shot!</b> Yer rival checks their secret map and shouts back what happened: MISS, HIT or SUNK! Then mark it on yer chart with the big buttons, honest pirate style!") + '</p>' +
+                ? "Tap a square on the RIVAL SHIPS board — send that cannonball FLYING!"
+                : "Tap a square below, then <b>SHOUT yer shot!</b> Yer rival shouts back: MISS, HIT or SUNK — mark it with the big buttons!") + '</p>' +
               (isSolo() ? "" : '<div id="mark-area"><p class="phase-sub">👆 First, tap a square on the RIVAL SHIPS chart below to pick yer target!</p></div>') + '</div>';
             $("code-area").innerHTML = "";
           } else if (isSolo()){
@@ -2775,7 +2817,7 @@ println!("{}", total);`,
             area.innerHTML =
               '<div class="panel fadeup"><p class="phase-title">💥 INCOMING! Their cannonball is on its way!</p>' +
               miloSays(flavor(MILO_INCOMING_LINES, 3)) +
-              '<p class="phase-sub">Your rival is aiming at YOUR fleet. They\'ll call out a square on the call (like “D5”) — tap that exact square on your MY FLEET board below.</p></div>';
+              '<p class="phase-sub">They\'ll shout a square on the call (like “D5”) — tap it on your MY FLEET board below.</p></div>';
             $("code-area").innerHTML = "";
           }
         }
@@ -3030,9 +3072,9 @@ println!("{}", total);`,
         const ch = G.challenge;
         let verdict;
         if (G.finder === "me" && G.finderCorrect) verdict = '<div class="verdict good">🎉 ' + flavor(MILO_CHEERS, 0) + (isSolo() ? ' You beat Barnaclebeard\'s sonar fair and square — the cannon shot is YOURS!</div>' : ' You earned the cannon shot!</div>');
-        else if (G.finder === "me" && !G.finderCorrect) verdict = '<div class="verdict bad">💦 ' + flavor(MILO_TEASES, 1) + ' You tapped line ' + (G.pickedLine + 1) + ', but the bug was hiding on line ' + (ch.b + 1) + '. Read the Captain\'s Log below, learn its secret, and the shot passes to ' + (isSolo() ? RIVAL_NAME : "your rival") + ' this time.</div>';
-        else if (G.finder === "opp" && G.finderCorrect && isSolo()) verdict = '<div class="verdict info">⏰ SONAR BEATEN BY A WHISKER! ' + RIVAL_NAME + '\'s crew spotted the bug first this time — he takes the shot. Sneaky old sea-dog! Soak up the lesson below and snatch the next round right back!</div>';
-        else if (G.finder === "opp" && G.finderCorrect) verdict = '<div class="verdict info">🏴‍☠️ Your rival found the bug fair and square — they take the shot. Soak up the lesson below and steal the next round, sneaky style!</div>';
+        else if (G.finder === "me" && !G.finderCorrect) verdict = '<div class="verdict bad">💦 ' + flavor(MILO_TEASES, 1) + ' You tapped line ' + (G.pickedLine + 1) + ' — the bug hid on line ' + (ch.b + 1) + '! The shot passes to ' + (isSolo() ? RIVAL_NAME : "your rival") + '. Lesson below 👇</div>';
+        else if (G.finder === "opp" && G.finderCorrect && isSolo()) verdict = '<div class="verdict info">⏰ ' + RIVAL_NAME + ' spotted it first — he takes the shot! Lesson below 👇 — snatch the next round back!</div>';
+        else if (G.finder === "opp" && G.finderCorrect) verdict = '<div class="verdict info">🏴‍☠️ Your rival found it first — they take the shot. Lesson below 👇</div>';
         else verdict = '<div class="verdict good">🎉 PLOT TWIST! Your rival picked the wrong line — the shot is YOURS! Here\'s where that rascal bug was hiding all along:</div>';
 
         const fixHtml = ch.x.split("\n").map(l => highlightLine(l, setup.lang)).join("<br />");
