@@ -1,6 +1,6 @@
-# Debug Battleship
+# Bug Buccaneers
 
-Debug Battleship is a kid-friendly pirate coding game that combines a
+Bug Buccaneers (formerly Debug Battleship) is a kid-friendly pirate coding game that combines a
 bug hunt with Battleship. Each round presents a short code snippet with
 one planted fault. The player who spots the fault first earns a shot at
 the opposing fleet; every round ends with a plain-language explanation

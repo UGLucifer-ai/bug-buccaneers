@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" href="data:," />
-    <title>Debug Battleship — Bug Hunt on the High Seas!</title>
+    <title>Bug Buccaneers — Bug Hunt on the High Seas!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -269,6 +269,51 @@
       .pause-stats{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:0 0 20px; }
       .pause-actions{ display:grid; gap:10px; justify-items:center; }
       .pause-actions .btn.ghost{ min-width:200px; }
+
+      /* ===== Redesigned start screen (mockup) ===== */
+      .sound-row{ gap:10px; }
+      .help-btn{ width:44px; height:44px; border-radius:50%; border:3px solid #fff; background:#219ebc; color:#fff; font:800 22px var(--fun); cursor:pointer; box-shadow:0 4px 0 rgba(11,79,134,.3); }
+      .sound-pill{ width:auto !important; height:44px !important; border-radius:999px !important; padding:0 16px; font:800 14px var(--fun) !important; letter-spacing:.08em; color:#0b4f86; }
+      .setup2{ display:grid; grid-template-columns:1fr; grid-template-areas:"head" "milo" "start" "opts" "steps"; column-gap:28px; }
+      .setup2 > *{ min-width:0; }
+      .s-head{ grid-area:head; } .s-milo{ grid-area:milo; } .s-start{ grid-area:start; } .s-opts{ grid-area:opts; } .s-steps{ grid-area:steps; }
+      .setup2 h1{ font-size:clamp(34px,9.5vw,54px); margin-top:0; }
+      .setup2 .tagline{ font-size:16px; margin-bottom:12px; }
+      .setup2 .mascot{ margin-bottom:22px; }
+      .setsail{ width:100%; font-size:28px !important; padding:16px 12px !important; border-radius:22px !important; letter-spacing:.04em; animation:pulse 2.4s ease-in-out infinite; margin:0 !important; }
+      @keyframes pulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.025);} }
+      .start-sub{ text-align:center; margin:8px 0 16px; font-weight:800; color:#0b4f86; font-size:14px; }
+      .steps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+      .steps-head h2{ margin:0 !important; }
+      .link-help{ border:2px solid var(--cyan); background:#fff; color:#0b4f86; border-radius:999px; padding:5px 12px; font:800 13px var(--fun); cursor:pointer; }
+      .setup2 .steps .tile{ font-size:15px; padding:12px 6px; }
+      .setup2 label.flabel{ margin:20px 0 10px; font-size:13px; }
+      .setup2 .s-opts label.flabel:first-child{ margin-top:0; }
+      #room-block{ padding-top:4px; }
+      .langgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+      .lcard{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 2px; border:3px solid #fff; border-radius:16px; background:#fff; cursor:pointer; font-family:var(--fun); box-shadow:0 4px 0 rgba(11,79,134,.14), inset 0 -4px 0 var(--lc); transition:transform .12s; }
+      .lcard .lemo{ font-size:24px; line-height:1.1; }
+      .lcard .lname{ font-size:12.5px; font-weight:800; color:#0b4f86; }
+      .lcard.sel{ border-color:var(--orange); background:#ffe9a8; transform:scale(1.06); box-shadow:inset 0 0 0 2px var(--orange), 0 4px 0 rgba(180,83,9,.35); }
+      .levels .stars{ display:block; font-size:18px; letter-spacing:1px; margin-bottom:2px; }
+      .help-modal{ position:fixed; inset:0; background:rgba(11,40,70,.55); display:none; align-items:center; justify-content:center; z-index:70; padding:16px; }
+      .help-modal.show{ display:flex; }
+      .help-card{ position:relative; background:#fff; border-radius:24px; border:4px solid var(--orange); max-width:620px; max-height:86vh; overflow:auto; padding:22px 20px; }
+      .help-card h2{ color:#0b4f86; margin:0 0 10px; font-size:18px; }
+      .help-close{ position:absolute; top:10px; right:10px; width:36px; height:36px; border-radius:50%; border:none; background:#ffe3ec; font-size:18px; cursor:pointer; }
+      @media (min-width:900px){
+        .wrap{ max-width:1180px; }
+        .setup2{ grid-template-columns:1fr 1fr; grid-template-areas:"head opts" "milo opts" "steps opts" ". opts" ". start"; grid-template-rows:auto auto auto 1fr auto; align-items:start; }
+        .s-start{ margin-top:4px; }
+        .s-opts{ margin-bottom:12px; }
+      }
+      .milo-talk{ display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+      .hear-milo{ border:2px solid var(--orange); background:#fff; color:#b45309; border-radius:999px; padding:6px 14px; font:800 14px var(--fun); cursor:pointer; box-shadow:0 3px 0 rgba(180,83,9,.25); }
+      .mascot.speaking{ box-shadow:0 0 0 4px rgba(255,200,60,.55), 0 0 26px rgba(255,170,30,.7); }
+      .mascot.speaking svg{ animation:talkbob .45s ease-in-out infinite; }
+      @keyframes talkbob{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-4px) rotate(2deg);} }
+      .mascot.speaking #milo-line::after{ content:"▌"; color:var(--orange); animation:blink .6s steps(1) infinite; }
+      @keyframes blink{ 50%{ opacity:0; } }
       .hidden{ display:none !important; }
       .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); background:#ffffff; border:3px solid var(--sun); color:var(--ink); font-size:14.5px; font-weight:700; padding:12px 16px; border-radius:16px; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:60; max-width:92vw; text-align:center; line-height:1.55; box-shadow:0 8px 0 rgba(11,79,134,.2); }
       .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
@@ -287,13 +332,13 @@
       <span class="sea-wave w2"></span>
     </div>
     <div class="wrap">
-      <div class="sound-row"><span class="sound-label">SOUND</span><button class="sound-toggle" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊</button></div>
+      <div class="sound-row"><button class="help-btn" id="btn-help" type="button" aria-label="How to play">?</button><button class="sound-toggle sound-pill" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊 SOUND ON</button></div>
 
       <!-- ================= SETUP ================= -->
-      <section id="screen-setup">
-        <h1>DEBUG <span class="accent">BATTLESHIP</span></h1>
-        <p class="tagline">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p>
-        <div class="mascot"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true">
+      <section id="screen-setup" class="setup2">
+        <div class="s-head"><h1>BUG <span class="accent">BUCCANEERS</span></h1>
+        <p class="tagline">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p></div>
+        <div class="s-milo"><div class="mascot"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true">
   <!-- captain coat -->
   <path d="M13 64 L17 49 Q32 43 47 49 L51 64 Z" fill="#14406b"/>
   <path d="M27 50 L37 50 L32 63 Z" fill="#ffffff"/>
@@ -339,19 +384,59 @@
   </g>
   <path d="M28.6 17.8 l6.8 -2.4 M35.4 17.8 l-6.8 -2.4" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
   <circle cx="30.9" cy="13.6" r=".85" fill="#26324a"/><circle cx="33.1" cy="13.6" r=".85" fill="#26324a"/>
-</svg><p><b>Ahoy! I'm Captain Milo</b> of the Golden Gull. Ready to hunt some bugs, Captain?</p></div>
-
-        <div class="panel">
-          <h2>⚓ HOW TO PLAY — EASY AS 1·2·3·4!</h2>
-          <div class="steps">
+</svg><div class="milo-talk"><p id="milo-line"><b>Ahoy! I'm Captain Milo</b> of the Golden Gull. Pick yer seas and let's hunt some bugs, Captain!</p><button type="button" class="hear-milo" id="btn-hear-milo" aria-label="Hear Captain Milo introduce himself">🔊 Hear Milo</button></div></div></div>
+        <audio id="milo-intro" src="audio/milo-intro.mp3" preload="auto"></audio>
+        <div class="s-start"><button class="btn primary setsail" id="btn-start" type="button">⚓ SET SAIL!</button>
+          <p class="start-sub" id="start-sub">🏝️ Solo Adventure · 🐍 Python · ⭐⭐ Beginner</p></div>
+        <div class="panel s-steps">
+          <div class="steps-head"><h2>⚓ HOW TO PLAY</h2><button type="button" class="link-help" id="btn-help2">📜 Full orders</button></div>
+          <div class="steps" id="steps-solo">
+            <div class="tile"><span class="ic">🗺️</span>Hide yer fleet</div>
+            <div class="tile"><span class="ic">🔍</span>Spot the bug fast</div>
+            <div class="tile"><span class="ic">💥</span>Fire the cannons!</div>
+            <div class="tile"><span class="ic">💰</span>Grab the treasure</div>
+          </div>
+          <div class="steps hidden" id="steps-crew">
             <div class="tile"><span class="ic">📞</span>Call yer crew</div>
             <div class="tile"><span class="ic">🎯</span>Same code, same map</div>
             <div class="tile"><span class="ic">🔍</span>Spot the bug first</div>
             <div class="tile"><span class="ic">💥</span>Fire the cannons!</div>
           </div>
-          <details class="fullorders">
-            <summary>📜 The Captain's full orders — tap to read</summary>
-          <ol class="howto" id="howto-crew">
+        </div>
+        <div class="panel s-opts">
+          <label class="flabel">🎮 PLAY MODE</label>
+          <div class="seg cols2 seg-mode" id="seg-mode">
+            <button type="button" data-mode="solo" class="sel">🏝️ SOLO ADVENTURE<small>You vs computer pirates</small></button>
+            <button type="button" data-mode="crew">👥 JOIN A CREW<small>2 players · 2 phones</small></button>
+          </div>
+          <div id="room-block" class="hidden">
+          <label class="flabel" for="room-input">🗝️ SECRET CREW CODE</label>
+          <div class="roomrow">
+            <input id="room-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" />
+            <button class="btn small ghost" id="btn-random-code" type="button">🎲 SURPRISE ME!</button>
+          </div>
+          </div>
+          <div id="side-block" class="hidden">
+          <label class="flabel">🏴‍☠️ WHICH PIRATE ARE YOU?</label>
+          <div class="seg cols2" id="seg-side">
+            <button type="button" data-side="1" class="sel">⚓ PIRATE 1</button>
+            <button type="button" data-side="2">🗺️ PIRATE 2</button>
+          </div>
+          </div>
+          <label class="flabel">💻 PICK YER LANGUAGE</label>
+          <div class="langgrid" id="seg-lang"><button type="button" data-lang="python" class="lcard sel" style="--lc:#3776ab"><span class="lemo">🐍</span><span class="lname">Python</span></button><button type="button" data-lang="javascript" class="lcard" style="--lc:#d4a900"><span class="lemo">⚡</span><span class="lname">JavaScript</span></button><button type="button" data-lang="java" class="lcard" style="--lc:#e76f00"><span class="lemo">☕</span><span class="lname">Java</span></button><button type="button" data-lang="cpp" class="lcard" style="--lc:#00599c"><span class="lemo">➕</span><span class="lname">C++</span></button><button type="button" data-lang="sql" class="lcard" style="--lc:#336791"><span class="lemo">🗄️</span><span class="lname">SQL</span></button><button type="button" data-lang="c" class="lcard" style="--lc:#5c6bc0"><span class="lemo">🔧</span><span class="lname">C</span></button><button type="button" data-lang="csharp" class="lcard" style="--lc:#68217a"><span class="lemo">🎵</span><span class="lname">C#</span></button><button type="button" data-lang="typescript" class="lcard" style="--lc:#3178c6"><span class="lemo">🔷</span><span class="lname">TypeScript</span></button><button type="button" data-lang="go" class="lcard" style="--lc:#00add8"><span class="lemo">🐹</span><span class="lname">Go</span></button><button type="button" data-lang="php" class="lcard" style="--lc:#777bb4"><span class="lemo">🐘</span><span class="lname">PHP</span></button><button type="button" data-lang="ruby" class="lcard" style="--lc:#cc342d"><span class="lemo">💎</span><span class="lname">Ruby</span></button><button type="button" data-lang="rust" class="lcard" style="--lc:#b7410e"><span class="lemo">🦀</span><span class="lname">Rust</span></button></div>
+          <label class="flabel">🌊 LEVEL</label>
+          <div class="seg cols3 levels" id="seg-level">
+            <button type="button" data-level="novice"><span class="stars">⭐</span>Novice<small>Calm seas</small></button>
+            <button type="button" data-level="beginner" class="sel"><span class="stars">⭐⭐</span>Beginner<small>Breezy seas</small></button>
+            <button type="button" data-level="expert"><span class="stars">⭐⭐⭐</span>Expert<small>Stormy seas</small></button>
+          </div>
+        </div>
+        <div class="help-modal" id="help-modal" role="dialog" aria-modal="true" aria-label="How to play">
+          <div class="help-card">
+            <button type="button" class="help-close" id="help-close" aria-label="Close">✕</button>
+            <h2>📜 THE CAPTAIN'S FULL ORDERS</h2>
+            <ol class="howto" id="howto-crew">
             <li>Both pirates open this game on their own phones or tablets. Two screens, one adventure!</li>
             <li>On your call, agree your battle plan: enter the <b>same secret crew code</b>, pick the <b>same language</b> — Python, JavaScript, Java, C++, SQL, C, C#, TypeScript, Go, PHP, Ruby or Rust — and the <b>same level</b>, but choose <b>opposite pirate numbers</b>. No peeking at each other's maps!</li>
             <li>Then <b>ARRANGE YER FLEET!</b> Tap a ship, tap the sea to hide her, spin her with the big ROTATE button, tap a placed ship to pick her up and move her. Your map is TOP SECRET — it lives only on YOUR phone! Not feeling fancy? Tap <b>Surprise Me!</b> and Captain Milo hides them for you.</li>
@@ -361,7 +446,7 @@
           </ol>
           <ol class="howto hidden" id="howto-solo">
             <li>No crew-mate? No problem! In a <b>Solo Adventure</b> it's just YOU against the computer pirates — no secret code, no phone call needed!</li>
-            <li>Your rival is the sneaky <b>Captain Barnaclebeard</b> and his Rusty Bucket crew. Pick your <b>language</b> and <b>level</b> below, then tap SET SAIL SOLO!</li>
+            <li>Your rival is the sneaky <b>Captain Barnaclebeard</b> and his Rusty Bucket crew. Pick your <b>language</b> and <b>level</b>, then tap SET SAIL!</li>
             <li>First, <b>ARRANGE YER FLEET!</b> Tap a ship, tap the sea to hide her, spin her with ROTATE, tap her again to move her — or tap <b>Surprise Me!</b> and let Captain Milo do the hiding. Barnaclebeard hides his own fleet in secret, the sneaky old goat!</li>
             <li>Every round, a code snippet hides one sneaky bug — and Barnaclebeard is hunting it too! Watch his <b>sonar sweep</b> fill up: spot the bug and tap the right line <b>before his sonar finishes</b>, and YOU fire the cannons!</li>
             <li>Too slow, or a wrong line? Barnaclebeard steals the shot and fires at YOUR fleet all by himself. First to sink the whole rival fleet grabs the Starlight Hoard!</li>
@@ -369,56 +454,8 @@
           </ol>
           <div class="recipe" id="recipe-crew">🏴‍☠️ Same code + same language + same level + opposite pirates — match all four, or the maps won't match!</div>
           <div class="recipe hidden" id="recipe-solo">🦜 Solo rule: wilder seas = a faster Barnaclebeard. Sharp eyes win!</div>
-          </details>
-        </div>
-
-        <div class="panel">
-          <label class="flabel">🎮 PLAY MODE</label>
-          <div class="seg cols2 seg-mode" id="seg-mode">
-            <button type="button" data-mode="crew" class="sel">👥 JOIN A CREW!<small>2 players · 2 phones</small></button>
-            <button type="button" data-mode="solo">🏝️ SOLO ADVENTURE!<small>You vs computer pirates</small></button>
+          
           </div>
-
-          <div id="room-block">
-          <label class="flabel" for="room-input">🗝️ SECRET CREW CODE</label>
-          <div class="roomrow">
-            <input id="room-input" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE" />
-            <button class="btn small ghost" id="btn-random-code" type="button">🎲 SURPRISE ME!</button>
-          </div>
-          </div>
-
-          <label class="flabel">💻 LANGUAGE</label>
-          <div class="seg cols-lang" id="seg-lang">
-            <button type="button" data-lang="python" class="sel">Python</button>
-            <button type="button" data-lang="javascript">JavaScript</button>
-            <button type="button" data-lang="java">Java</button>
-            <button type="button" data-lang="cpp">C++</button>
-            <button type="button" data-lang="sql">SQL</button>
-            <button type="button" data-lang="c">C</button>
-            <button type="button" data-lang="csharp">C#</button>
-            <button type="button" data-lang="typescript">TypeScript</button>
-            <button type="button" data-lang="go">Go</button>
-            <button type="button" data-lang="php">PHP</button>
-            <button type="button" data-lang="ruby">Ruby</button>
-            <button type="button" data-lang="rust">Rust</button>
-          </div>
-
-          <label class="flabel">🌊 LEVEL</label>
-          <div class="seg cols3" id="seg-level">
-            <button type="button" data-level="novice">Novice<small>Calm seas</small></button>
-            <button type="button" data-level="beginner" class="sel">Beginner<small>Breezy seas</small></button>
-            <button type="button" data-level="expert">Expert<small>STORMY seas</small></button>
-          </div>
-
-          <div id="side-block">
-          <label class="flabel">🏴‍☠️ WHICH PIRATE ARE YOU?</label>
-          <div class="seg cols2" id="seg-side">
-            <button type="button" data-side="1" class="sel">⚓ PIRATE 1</button>
-            <button type="button" data-side="2">🗺️ PIRATE 2</button>
-          </div>
-          </div>
-
-          <button class="btn primary" id="btn-start" type="button">⚓ JOIN THE CREW! — LET'S SAIL!</button>
         </div>
       </section>
 
@@ -2509,7 +2546,7 @@ println!("{}", total);`,
       }
       function miloSays(line){ return '<div class="milo"><span class="face">🏴‍☠️</span><span><b>Captain Milo:</b> ' + line + '</span></div>'; }
       const $ = id => document.getElementById(id);
-      const setup = { room: "", lang: "python", level: "beginner", side: 1, mode: "crew" };
+      const setup = { room: "", lang: "python", level: "beginner", side: 1, mode: "solo" };
       let G = null;
       let explainTimer = null;
       let raceTimer = null;
@@ -3495,7 +3532,7 @@ println!("{}", total);`,
       function sfxDefeat(){ [67, 64, 62, 60].forEach((n, i) => tone(mtof(n), i * 0.22, 0.32, "sine", 0.13)); }
       function updateSoundBtn(){
         const b = $("btn-sound");
-        b.textContent = soundOn ? "🔊" : "🔇";
+        b.textContent = soundOn ? "🔊 SOUND ON" : "🔇 SOUND OFF";
         b.setAttribute("aria-label", soundOn ? "Sound on — tap to mute" : "Sound off — tap to turn sound on");
         b.classList.toggle("muted", !soundOn);
       }
@@ -3674,11 +3711,23 @@ println!("{}", total);`,
           });
         });
       }
-      segWire("seg-lang", "lang", v => setup.lang = v);
-      segWire("seg-level", "level", v => setup.level = v);
+      segWire("seg-lang", "lang", v => { setup.lang = v; updateStartSub(); });
+      segWire("seg-level", "level", v => { setup.level = v; updateStartSub(); });
+      function updateStartSub(){
+        const lb = document.querySelector('#seg-lang button.sel');
+        const lv = document.querySelector('#seg-level button.sel');
+        $("start-sub").textContent = (setup.mode === "solo" ? "🏝️ Solo Adventure" : "👥 Crew Battle") + " · " +
+          lb.querySelector(".lemo").textContent + " " + lb.querySelector(".lname").textContent + " · " +
+          lv.querySelector(".stars").textContent + " " + lv.childNodes[1].textContent;
+      }
+      function openHelp(){ $("help-modal").classList.add("show"); }
+      $("btn-help").addEventListener("click", openHelp);
+      $("btn-help2").addEventListener("click", openHelp);
+      $("help-close").addEventListener("click", () => $("help-modal").classList.remove("show"));
+      $("help-modal").addEventListener("click", e => { if (e.target.id === "help-modal") $("help-modal").classList.remove("show"); });
       segWire("seg-side", "side", v => setup.side = parseInt(v, 10));
       segWire("seg-mode", "mode", v => applyMode(v));
-      function applyMode(m){
+            function applyMode(m){
         setup.mode = m;
         const solo = m === "solo";
         $("room-block").classList.toggle("hidden", solo);
@@ -3687,8 +3736,12 @@ println!("{}", total);`,
         $("recipe-crew").classList.toggle("hidden", solo);
         $("howto-solo").classList.toggle("hidden", !solo);
         $("recipe-solo").classList.toggle("hidden", !solo);
-        $("btn-start").textContent = solo ? "⚓ SET SAIL SOLO! — ADVENTURE AWAITS!" : "⚓ JOIN THE CREW! — LET'S SAIL!";
+        $("btn-start").textContent = solo ? "⚓ SET SAIL!" : "⚓ SET SAIL WITH CREW!";
+        $("steps-solo").classList.toggle("hidden", !solo);
+        $("steps-crew").classList.toggle("hidden", solo);
+        updateStartSub();
       }
+      applyMode("solo");
       $("btn-random-code").addEventListener("click", () => {
         const words = ["SONAR", "DEBUG", "KRAKEN", "ANCHOR", "PIXEL", "BINARY", "CIPHER"];
         $("room-input").value = words[Math.floor(Math.random() * words.length)] + Math.floor(10 + Math.random() * 90);
@@ -3732,6 +3785,43 @@ println!("{}", total);`,
           if (soloPaused) resumeSolo(); else pauseSolo();
         }
       });
+    </script>
+    <script>
+    /* ===== Captain Milo spoken intro (start screen) ===== */
+    (function(){
+      const audio=document.getElementById("milo-intro"), line=document.getElementById("milo-line"),
+            btn=document.getElementById("btn-hear-milo"), box=line.closest(".mascot"), orig=line.innerHTML;
+      const TEXT="Ahoy, matey! I'm Captain Milo of the Golden Gull, and welcome aboard Bug Buccaneers! Every round, a sneaky bug hides in the code. Spot it first, fire yer cannon, and sink the enemy fleet. Pick yer seas and tap Set Sail!";
+      let autoDone=false, raf=0;
+      function setup(){ return document.getElementById("screen-setup"); }
+      function onSetup(){ const s=setup(); return s && !s.classList.contains("hidden") && s.offsetParent!==null; }
+      function tick(){ const d=audio.duration||16; const n=Math.min(TEXT.length, Math.ceil(TEXT.length*audio.currentTime/(d*0.95)));
+        line.textContent=TEXT.slice(0,n); if(!audio.paused) raf=requestAnimationFrame(tick); }
+      function stop(){ audio.pause(); try{audio.currentTime=0;}catch(e){} cancelAnimationFrame(raf);
+        box.classList.remove("speaking"); line.innerHTML=orig; btn.textContent="🔊 Hear Milo"; }
+      window.stopMiloIntro=stop;
+      function play(){ if(!soundOn || !onSetup()) return; autoDone=true; audio.currentTime=0;
+        const p=audio.play(); if(p&&p.catch) p.catch(()=>stop());
+        box.classList.add("speaking"); btn.textContent="⏹ Stop Milo"; line.textContent=""; raf=requestAnimationFrame(tick); }
+      audio.addEventListener("ended",()=>{ cancelAnimationFrame(raf); box.classList.remove("speaking"); line.textContent=TEXT; btn.textContent="🔊 Hear Milo again"; });
+      btn.addEventListener("click",e=>{ e.stopPropagation(); autoDone=true; if(!audio.paused) stop(); else play(); });
+      document.getElementById("btn-start").addEventListener("click",stop,true);
+      document.getElementById("btn-sound").addEventListener("click",()=>{ if(!soundOn) stop(); });
+      function firstTap(e){ document.removeEventListener("pointerdown",firstTap,true);
+        if(autoDone || (e.target.closest && e.target.closest("#btn-start,#btn-sound,#btn-hear-milo"))) { autoDone=true; return; }
+        play(); }
+      document.addEventListener("pointerdown",firstTap,true);
+      /* reserve bubble height for the full caption so typing never pushes Set Sail down */
+      function reserve(){ const keep=line.innerHTML; line.style.minHeight=""; line.textContent=TEXT;
+        const h=line.getBoundingClientRect().height; line.innerHTML=keep; if(h) line.style.minHeight=Math.ceil(h)+"px"; }
+      reserve(); window.addEventListener("resize",()=>{ if(audio.paused) reserve(); });
+      if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ if(audio.paused) reserve(); });
+      /* '?' help only lives on the start screen */
+      const helpBtn=document.getElementById("btn-help");
+      function syncHelp(){ helpBtn.classList.toggle("hidden", setup().classList.contains("hidden")); }
+      new MutationObserver(syncHelp).observe(setup(),{attributes:true,attributeFilter:["class"]}); syncHelp();
+      window.__miloTest={play,stop,TEXT};
+    })();
     </script>
   </body>
 </html>
