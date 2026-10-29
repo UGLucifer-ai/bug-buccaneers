@@ -9,7 +9,7 @@ to remember.
 
 ## Play it
 
-**Play on GitHub Pages:** [https://uglucifer-ai.github.io/debug-battleship/](https://uglucifer-ai.github.io/debug-battleship/)
+**Play on GitHub Pages:** [https://uglucifer-ai.github.io/bug-buccaneers/](https://uglucifer-ai.github.io/bug-buccaneers/)
 
 The complete web game is also contained in this repository as
 `index.html`.
