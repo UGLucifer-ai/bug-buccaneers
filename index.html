@@ -386,6 +386,8 @@
       .panel,.mascot{ width:100%; max-width:100%; margin-left:0; margin-right:0; overflow:hidden; border-radius:22px; }
       .mascot{ overflow:visible; }
       .wrap img,.wrap svg,.wrap pre,.wrap table{ max-width:100%; }
+          .sound-pill{ white-space:nowrap; }
+      @media (max-width:420px){ .sound-row .sound-pill{ font-size:11px; padding-left:10px; padding-right:10px; letter-spacing:.04em; } }
     </style>
   </head>
   <body>
@@ -2711,7 +2713,10 @@ println!("{}", total);`,
       function nextChallenge(){
         stopVoice(); // a new round silences the previous lesson — recorded clip and TTS alike
         const bank = BANKS[setup.lang][setup.level];
-        if (G.orderPos >= G.order.length){
+        // Once every hand-written puzzle in the bank has been dealt this voyage,
+        // keep dealing freshly generated programs instead of cycling repeats.
+        const bankDone = !hasCurriculum() && hasTpl() && G.orderPos >= G.order.length;
+        if (G.orderPos >= G.order.length && !bankDone){
           // reshuffle and cycle — same stream on both phones
           for (let i = G.order.length - 1; i > 0; i--){
             const j = Math.floor(G.rngChal() * (i + 1));
@@ -2736,7 +2741,7 @@ println!("{}", total);`,
           G.challengeIndex = ci;
           G.challenge = window.BB_makeLesson(setup.lang, ci, vi, rng);
           G.orderPos++;
-        } else if (hasTpl() && ((G.tplStep = (G.tplStep || 0) + 1) % 2 === 1 || !bank || !bank.length)){
+        } else if (hasTpl() && ((G.tplStep = (G.tplStep || 0) + 1) % 2 === 1 || !bank || !bank.length || bankDone)){
           // BEGINNER / EXPERT: every other round is a freshly generated whole program with hand-written decoys
           const TL = window.BB_TPL[setup.lang][setup.level];
           const rng = isSolo() ? Math.random : mulberry32(hashSeed(matchKey("|tpl" + G.tplStep)));
@@ -2966,6 +2971,10 @@ println!("{}", total);`,
           window.speechSynthesis.pause();
           pauseState.voicePaused = true;
         }
+        if (typeof phraseAudio !== "undefined" && phraseAudio && !phraseAudio.paused && voiceOn){
+          phraseAudio.pause();
+          pauseState.phrasePaused = true;
+        }
         $("pause-round").textContent = G.round;
         $("pause-ships-mine").textContent = G.myFleet ? afloat(G.myFleet, G.shotsOnMe) : 4;
         $("pause-ships-enemy").textContent = G.enemyFleet ? afloat(G.enemyFleet, G.myShots) : 4;
@@ -3002,6 +3011,7 @@ println!("{}", total);`,
           if (rp && rp.catch) rp.catch(() => { if (recordedOn) handleRecordedError(); });
         }
         if (saved && saved.voicePaused && voiceOn && voiceOK) window.speechSynthesis.resume();
+        if (saved && saved.phrasePaused && voiceOn && phraseAudio){ const pp = phraseAudio.play(); if (pp && pp.catch) pp.catch(() => {}); }
       }
 
       /* ============ RENDER ============ */
@@ -3284,20 +3294,29 @@ println!("{}", total);`,
         clearVoiceMarks();
         startTTS();
       }
+      /* Device-voice fallback: always prefer a male (ideally British) voice so
+         Milo never turns into the default robotic lady voice. */
+      const MALE_RX = /daniel|uk english male|\bmale\b|arthur|george|ryan|guy|brian|oliver|thomas|james|david|mark|christopher|fred|alex|aaron|rishi|lee/i;
+      const FEMALE_RX = /female|woman|samantha|victoria|karen|moira|tessa|fiona|serena|kate|susan|hazel|zira|libby|sonia|aria|jenny|libby|martha|catherine|allison|ava|google us english$|google uk english female/i;
       function pickMiloVoice(){
         if (!voiceOK) return;
         const vs = window.speechSynthesis.getVoices();
         if (!vs || !vs.length) return;
+        const en = vs.filter(v => /^en/i.test(v.lang));
+        const male = v => MALE_RX.test(v.name) && !/female/i.test(v.name);
+        const notFemale = v => !FEMALE_RX.test(v.name);
         miloVoice =
-          vs.find(v => /^en[-_]GB/i.test(v.lang) && /daniel|george|arthur|brian|ryan/i.test(v.name)) ||
-          vs.find(v => /^en[-_]GB/i.test(v.lang)) ||
-          vs.find(v => /^en/i.test(v.lang) && /male|david|christopher|guy|fred/i.test(v.name)) ||
-          vs.find(v => /^en/i.test(v.lang)) ||
-          vs[0];
+          en.find(v => /^en[-_]GB/i.test(v.lang) && male(v)) ||
+          en.find(male) ||
+          vs.find(male) ||
+          en.find(v => /^en[-_]GB/i.test(v.lang) && notFemale(v)) ||
+          en.find(notFemale) ||
+          en[0] || vs[0];
       }
       if (voiceOK){
         pickMiloVoice();
         if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener("voiceschanged", pickMiloVoice);
+        else window.speechSynthesis.onvoiceschanged = pickMiloVoice;
       }
       /* Turn a line of code into words a young ear can follow. */
       function sayCode(line){
@@ -3342,11 +3361,11 @@ println!("{}", total);`,
         const buggyLine = (ch.c.split("\n")[ch.b] || "");
         const fixLines = ch.x.split("\n").map(sayCode).filter(Boolean).join(". Then: ");
         return [
-          { el: "exp-title",  text: "Ahoy! Captain Milo here — lend me your ears, and I shall explain this bug! Its name is: " + sayProse(ch.n) + ". The sneaky rascal was hiding on line " + (ch.b + 1) + ". That line of code says: " + sayCode(buggyLine) },
-          { el: "exp-fault",  text: "What went wrong? " + sayProse(ch.f) },
-          { el: "exp-effect", text: "And why does it break? " + sayProse(ch.e) },
-          { el: "exp-fix",    text: "Now — the golden fix! The code should say: " + fixLines },
-          { el: "exp-take",   text: "Captain's secret treasure — remember this, me hearty! " + sayProse(ch.l) }
+          { el: "exp-title",  clip: "intro", text: "Its name is: " + sayProse(ch.n) + ". The sneaky rascal was hiding on line " + (ch.b + 1) + ". That line of code says: " + sayCode(buggyLine) },
+          { el: "exp-fault",  clip: "fault", text: "" + sayProse(ch.f) },
+          { el: "exp-effect", clip: "effect", text: "" + sayProse(ch.e) },
+          { el: "exp-fix",    clip: "fix", text: "The code should say: " + fixLines },
+          { el: "exp-take",   clip: "take", text: "" + sayProse(ch.l) }
         ];
       }
       function clearVoiceMarks(){
@@ -3366,9 +3385,6 @@ println!("{}", total);`,
         clearVoiceMarks();
         const el = document.getElementById(chunk.el);
         if (el) el.classList.add("voicing");
-        const u = new SpeechSynthesisUtterance(chunk.text);
-        if (miloVoice) u.voice = miloVoice;
-        u.rate = 0.97; u.pitch = 1.08;
         let advanced = false;
         const next = () => {
           if (advanced || !voiceOn || sess !== voiceSession) return;
@@ -3376,9 +3392,44 @@ println!("{}", total);`,
           voiceIdx++;
           speakNextChunk(sess);
         };
-        u.onend = next;
-        u.onerror = next;
-        window.speechSynthesis.speak(u);
+        const sayRest = () => {
+          if (!voiceOn || sess !== voiceSession) return;
+          if (!chunk.text){ next(); return; }
+          if (!miloVoice) pickMiloVoice();
+          const u = new SpeechSynthesisUtterance(chunk.text);
+          if (miloVoice){ u.voice = miloVoice; u.lang = miloVoice.lang; }
+          u.rate = 0.95; u.pitch = 0.8;
+          u.onend = next;
+          u.onerror = next;
+          window.speechSynthesis.speak(u);
+        };
+        if (chunk.clip){ playPhrase(chunk.clip, sess, sayRest); return; }
+        sayRest();
+      }
+      /* Milo's recorded fixed phrases (audio/phrases/*.mp3, edge-tts
+         en-GB-RyanNeural like the start intro); the dynamic remainder of
+         each line goes to the male device voice. If a clip fails, the
+         phrase is spoken by the device voice instead. */
+      const PHRASE_TEXT = { intro: "Ahoy! Captain Milo here — lend me your ears, and I shall explain this bug!", fault: "What went wrong?", effect: "And why does it break?", fix: "Now — the golden fix!", take: "Captain's secret treasure — remember this, me hearty!" };
+      let phraseAudio = null;
+      function playPhrase(name, sess, done){
+        if (!phraseAudio){ phraseAudio = new Audio(); phraseAudio.preload = "auto"; }
+        const a = phraseAudio;
+        let finished = false, triedAssets = false;
+        const fin = () => { if (finished) return; finished = true; a.onended = a.onerror = null; if (voiceOn && sess === voiceSession) done(); };
+        const fail = () => {
+          if (finished || !voiceOn || sess !== voiceSession) return;
+          if (!triedAssets){ triedAssets = true; a.src = "assets/audio/phrases/" + name + ".mp3"; const p2 = a.play(); if (p2 && p2.catch) p2.catch(fail); return; }
+          finished = true; a.onended = a.onerror = null;
+          const u = new SpeechSynthesisUtterance(PHRASE_TEXT[name] || "");
+          if (miloVoice){ u.voice = miloVoice; u.lang = miloVoice.lang; }
+          u.rate = 0.95; u.pitch = 0.8; u.onend = done; u.onerror = done;
+          window.speechSynthesis.speak(u);
+        };
+        a.onended = fin; a.onerror = fail;
+        a.src = "audio/phrases/" + name + ".mp3";
+        const p = a.play();
+        if (p && p.catch) p.catch(fail);
       }
       function startVoice(){
         if (!G || !G.challenge) return;
@@ -3401,6 +3452,7 @@ println!("{}", total);`,
       function stopVoice(){
         voiceSession++;
         if (voiceOK) window.speechSynthesis.cancel();
+        if (phraseAudio){ try { phraseAudio.onended = phraseAudio.onerror = null; phraseAudio.pause(); } catch (e) {} }
         if (miloAudio){
           recordedStopping = true;
           try { miloAudio.pause(); miloAudio.currentTime = 0; } catch (e) {}
