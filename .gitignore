@@ -1,0 +1,20 @@
+# Credentials and signing material
+*.keystore
+*.jks
+*.key
+*.p12
+*.pem
+
+# Android packages and signing outputs
+*.apk
+*.aab
+*.idsig
+
+# Build outputs
+**/build/
+**/build-manual/
+.gradle/
+out/
+
+# Local machine configuration
+local.properties
