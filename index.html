@@ -113,7 +113,7 @@
       .btn.primary{ background:linear-gradient(180deg, var(--sun), var(--orange)); border-color:#d97706; color:#4a2c00; width:100%; font-size:19px; margin-top:18px; box-shadow:0 5px 0 #b45309; }
       .btn.primary:hover{ filter:brightness(1.05); }
       #btn-start, #btn-ready{ animation:startPulse 2.2s ease-in-out infinite; }
-      @keyframes startPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.025);} }
+      @keyframes startPulse{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.08) drop-shadow(0 0 8px rgba(255,190,40,.6));} }
       .btn.ghost{ background:rgba(255,255,255,.75); }
       .btn.small{ min-height:44px; padding:8px 14px; font-size:13.5px; font-weight:700; }
       .btn:disabled{ opacity:.5; cursor:not-allowed; }
@@ -281,7 +281,7 @@
       .setup2 .tagline{ font-size:16px; margin-bottom:12px; }
       .setup2 .mascot{ margin-bottom:22px; }
       .setsail{ width:100%; font-size:28px !important; padding:16px 12px !important; border-radius:22px !important; letter-spacing:.04em; animation:pulse 2.4s ease-in-out infinite; margin:0 !important; }
-      @keyframes pulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.025);} }
+      @keyframes pulse{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.08) drop-shadow(0 0 8px rgba(255,190,40,.6));} }
       .start-sub{ text-align:center; margin:8px 0 16px; font-weight:800; color:#0b4f86; font-size:14px; }
       .steps-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
       .steps-head h2{ margin:0 !important; }
@@ -378,7 +378,15 @@
       @keyframes bbTw{ 0%,100%{ opacity:0; transform:scale(.3) rotate(0);} 50%{ opacity:1; transform:scale(1.2) rotate(90deg);} }
       @keyframes bbGlow{ 0%,100%{ box-shadow:0 0 6px 1px rgba(255,209,102,.45), 0 4px 0 rgba(11,79,134,.25);} 50%{ box-shadow:0 0 18px 5px rgba(255,209,102,.8), 0 4px 0 rgba(11,79,134,.25);} }
       @media (prefers-reduced-motion: reduce){ .bb-title,.bb-emblem,.bb-words span::after,.bb-spark,.bb-tag{ animation:none !important; } .bb-spark{ opacity:.8; } }
-</style>
+
+      /* mobile-fix: even side margins, no horizontal overflow, room for Ask Milo */
+      *,*::before,*::after{ box-sizing:border-box; }
+      html,body{ max-width:100%; overflow-x:hidden; }
+      .wrap{ width:100%; padding-left:max(14px,env(safe-area-inset-left)); padding-right:max(14px,env(safe-area-inset-right)); padding-top:max(18px,env(safe-area-inset-top)); padding-bottom:calc(96px + env(safe-area-inset-bottom)); }
+      .panel,.mascot{ width:100%; max-width:100%; margin-left:0; margin-right:0; overflow:hidden; border-radius:22px; }
+      .mascot{ overflow:visible; }
+      .wrap img,.wrap svg,.wrap pre,.wrap table{ max-width:100%; }
+    </style>
   </head>
   <body>
     <div class="sea-decor" aria-hidden="true">

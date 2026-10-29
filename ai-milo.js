@@ -145,8 +145,8 @@
   const $ = id => document.getElementById(id);
   const css = document.createElement("style");
   css.textContent = `
-#am-fab{position:fixed;right:14px;bottom:14px;z-index:60;border:0;border-radius:999px;padding:12px 16px;font:700 15px system-ui,sans-serif;background:linear-gradient(#ffd75e,#e0a21b);color:#3a2300;box-shadow:0 4px 14px #0008;cursor:pointer}
-#am-panel{position:fixed;right:14px;bottom:70px;z-index:61;width:min(380px,calc(100vw - 28px));max-height:min(560px,calc(100vh - 100px));display:flex;flex-direction:column;background:#0f2238;color:#f4ecd8;border:2px solid #e0a21b;border-radius:16px;box-shadow:0 10px 30px #000a;font:14px/1.4 system-ui,sans-serif}
+#am-fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,calc(env(safe-area-inset-bottom) + 12px));z-index:60;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:calc(100vw - 32px);min-height:46px;line-height:1;border:2px solid #fff6;border-radius:999px;padding:12px 18px;font:700 15px system-ui,sans-serif;background:linear-gradient(#ffd75e,#e0a21b);color:#3a2300;box-shadow:0 4px 14px #0008;cursor:pointer}
+#am-panel{position:fixed;box-sizing:border-box;right:max(16px,env(safe-area-inset-right));bottom:max(76px,calc(env(safe-area-inset-bottom) + 72px));z-index:61;width:min(380px,calc(100vw - 32px));max-height:min(560px,calc(100dvh - 110px));display:flex;flex-direction:column;background:#0f2238;color:#f4ecd8;border:2px solid #e0a21b;border-radius:16px;box-shadow:0 10px 30px #000a;font:14px/1.4 system-ui,sans-serif}
 #am-panel.hidden,#am-fab.hidden,.am-h{display:none!important}
 #am-head{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid #e0a21b55;font-weight:700}
 #am-head span{flex:1}#am-head button{background:none;border:0;color:#f4ecd8;font-size:18px;cursor:pointer}
