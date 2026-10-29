@@ -9,10 +9,7 @@ to remember.
 
 ## Play it
 
-**GitHub Pages:** `GITHUB_PAGES_URL_TO_BE_ADDED`
-
-> Placeholder: this will be replaced with the GitHub Pages address once
-> the repository's visibility has been decided and Pages is enabled.
+**Play on GitHub Pages:** [https://uglucifer-ai.github.io/debug-battleship/](https://uglucifer-ai.github.io/debug-battleship/)
 
 The complete web game is also contained in this repository as
 `index.html`.
