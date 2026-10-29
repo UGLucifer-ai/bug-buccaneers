@@ -46,7 +46,7 @@
       .tagline{ color:#14507e; font-size:18px; margin:0 0 16px; line-height:1.45; font-weight:800; }
       .mascot{ position:relative; display:flex; gap:12px; align-items:center; background:#fff7d6; border:3px solid var(--orange); border-radius:20px; padding:12px 14px; margin-bottom:20px; box-shadow:0 6px 0 rgba(11,79,134,.12); }
       .mascot::after{ content:""; position:absolute; left:44px; bottom:-13px; width:22px; height:22px; background:#fff7d6; border-right:3px solid var(--orange); border-bottom:3px solid var(--orange); transform:rotate(45deg) skew(12deg,12deg); border-bottom-right-radius:6px; }
-      .mascot svg{ flex:0 0 64px; animation:bob 3s ease-in-out infinite; }
+      .mascot svg{ flex:0 0 84px; animation:bob 3s ease-in-out infinite; }
       @keyframes bob{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-5px) rotate(2deg);} }
       .mascot p{ margin:0; font-size:16px; line-height:1.5; font-weight:700; color:#5b3a00; }
       .mascot p b{ color:#0b4f86; }
@@ -169,15 +169,15 @@
       .explain{ border:3px dashed #d97706; background-color:#fff6d8; background-image:radial-gradient(rgba(217,119,6,.10) 1.5px, transparent 1.7px), linear-gradient(180deg, #fffbe8, #ffedb5); background-size:22px 22px, 100% 100%; border-radius:22px; padding:16px; margin-bottom:14px; animation:fadeUp .3s ease both; box-shadow:0 8px 0 rgba(180,83,9,.18); }
       .explain h3{ margin:0 0 2px; font-size:19px; color:#0b4f86; }
       .explain .bugname{ font-size:11.5px; letter-spacing:.12em; color:var(--dim); margin-bottom:12px; font-weight:800; }
-      .explain h4{ font-size:12px; letter-spacing:.12em; color:var(--cyan); margin:14px 0 5px; font-weight:800; }
-      .explain h4:first-of-type{ margin-top:0; }
+      .explain h4{ font-size:12px; letter-spacing:.12em; color:var(--cyan); margin:14px 0 5px; font-weight:800; line-height:1.5; }
+      .explain h4:first-of-type{ margin-top:2px; }
       .explain p{ font-size:15px; line-height:1.65; margin:0; color:var(--ink); font-weight:600; }
       .fixcode{ background:#0b3d66; color:#eaf7ff; border:none; border-left:5px solid var(--green); border-radius:12px; padding:12px 14px; font-size:14.5px; white-space:pre-wrap; word-break:break-word; line-height:1.55; font-family:var(--mono); }
       .takeaway{ margin-top:14px; font-size:15px; line-height:1.6; background:#d3f9e8; border-radius:12px; padding:10px 12px; font-weight:600; }
       .takeaway b{ color:#087a54; }
       .celebrate{ margin-top:10px; font-size:15px; line-height:1.6; background:#ffe9a8; border:2px dashed var(--orange); border-radius:12px; padding:10px 12px; font-weight:700; color:#5b3a00; }
       .explain .btn{ width:100%; margin-top:14px; }
-      .explain .btn.listen{ background:linear-gradient(180deg, #38b6d9, #0b6fa8); border-color:#075a8a; color:#ffffff; box-shadow:0 5px 0 #075a8a; font-size:17px; }
+      .explain .btn.listen{ background:linear-gradient(180deg, #38b6d9, #0b6fa8); border-color:#075a8a; color:#ffffff; box-shadow:0 5px 0 #075a8a; font-size:17px; margin-bottom:22px; }
       .explain .btn.listen:hover{ filter:brightness(1.06); }
       .explain .btn.listen.speaking{ background:linear-gradient(180deg, #ff8fa3, #ef476f); border-color:#c9184a; box-shadow:0 5px 0 #c9184a; }
       .explain .voicing{ box-shadow:0 0 0 3px var(--cyan), 0 0 0 7px rgba(255,183,3,.5); border-radius:10px; }
@@ -293,7 +293,53 @@
       <section id="screen-setup">
         <h1>DEBUG <span class="accent">BATTLESHIP</span></h1>
         <p class="tagline">🏴‍☠️ Hunt the bug. Fire the cannon. Sink the fleet. Grab the treasure!</p>
-        <div class="mascot"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="36" r="20" fill="#ffd9b3"/><path d="M12 30a20 20 0 0 1 40 0l0 4-40 0z" fill="#06b6a0"/><circle cx="32" cy="13" r="4" fill="#ffb703"/><rect x="10" y="30" width="44" height="5" rx="2.5" fill="#0a8f7d"/><circle cx="25" cy="38" r="2.6" fill="#173a5e"/><circle cx="39" cy="38" r="2.6" fill="#173a5e"/><path d="M25 46q7 6 14 0" stroke="#173a5e" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M22 56l10-5 10 5-4 6h-12z" fill="#fb8500"/></svg><p><b>Ahoy! I'm Captain Milo</b> of the Golden Gull. Ready to hunt some bugs, Captain?</p></div>
+        <div class="mascot"><svg width="84" height="84" viewBox="0 0 64 64" aria-hidden="true">
+  <!-- captain coat -->
+  <path d="M13 64 L17 49 Q32 43 47 49 L51 64 Z" fill="#14406b"/>
+  <path d="M27 50 L37 50 L32 63 Z" fill="#ffffff"/>
+  <path d="M17 49 L32 63 L28 64 L14 52 Z" fill="#0d2c4c" opacity=".55"/>
+  <path d="M47 49 L32 63 L36 64 L50 52 Z" fill="#0d2c4c" opacity=".55"/>
+  <circle cx="32" cy="55" r="1.6" fill="#ffb703"/><circle cx="32" cy="60" r="1.6" fill="#ffb703"/>
+  <!-- red sash -->
+  <path d="M18 52 L46 60 L45 64 L17 56 Z" fill="#ef476f"/>
+  <!-- parrot on shoulder (viewer right) -->
+  <g>
+    <path d="M49 44 q5 6 3 13 l-3 0 q-1 -7 -3 -11 Z" fill="#219ebc"/>
+    <ellipse cx="49" cy="42" rx="4.6" ry="6" fill="#2fbf71" transform="rotate(-14 49 42)"/>
+    <circle cx="51.5" cy="35.5" r="3.4" fill="#38c172"/>
+    <path d="M54.5 34.5 l4 1.6 -4 1.8 Z" fill="#fb8500"/>
+    <circle cx="52.4" cy="34.8" r=".9" fill="#173a5e"/>
+  </g>
+  <!-- face -->
+  <circle cx="32" cy="33" r="17" fill="#ffd9b3"/>
+  <!-- beard -->
+  <path d="M15.5 31 a16.5 16.5 0 0 0 33 0 l-.5 7 Q46 55 32 55.5 Q18 55 16 38 Z" fill="#8a5a2b"/>
+  <path d="M23 44 q9 7 18 0 q-2 8 -9 8 q-7 0 -9 -8Z" fill="#754c22"/>
+  <!-- mouth smile through beard -->
+  <path d="M27.5 45.5 q4.5 3.5 9 0" stroke="#ffe9c9" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <!-- nose -->
+  <path d="M32 36 q1.8 2.4 0 4" stroke="#e0a878" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <!-- gold earring (viewer left) -->
+  <circle cx="15.8" cy="39" r="2.3" fill="none" stroke="#ffb703" stroke-width="1.7"/>
+  <!-- eye patch strap + patch (viewer right eye) -->
+  <path d="M16 24 L49 33" stroke="#1d2430" stroke-width="2.6"/>
+  <circle cx="40" cy="31.5" r="5.6" fill="#1d2430"/>
+  <circle cx="40" cy="31.5" r="5.6" fill="none" stroke="#39445c" stroke-width="1"/>
+  <!-- good eye + brow -->
+  <circle cx="24" cy="30" r="2.5" fill="#173a5e"/>
+  <path d="M20.5 25.5 q3.5 -2.2 7 -.6" stroke="#5b3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- tricorn hat -->
+  <path d="M3 24 Q14 8 32 12 Q50 8 61 24 Q47 17.5 32 19.5 Q17 17.5 3 24 Z" fill="#26324a"/>
+  <path d="M3 24 Q17 17.5 32 19.5 Q47 17.5 61 24 Q47 20.5 32 22 Q17 20.5 3 24Z" fill="#ffb703" opacity=".9"/>
+  <path d="M14 15.5 Q32 7 50 15.5 Q32 12 14 15.5Z" fill="#31405e"/>
+  <!-- skull emblem -->
+  <g fill="#ffffff">
+    <circle cx="32" cy="13.8" r="2.7"/>
+    <rect x="30.4" y="15.6" width="3.2" height="2" rx=".8"/>
+  </g>
+  <path d="M28.6 17.8 l6.8 -2.4 M35.4 17.8 l-6.8 -2.4" stroke="#ffffff" stroke-width="1.1" stroke-linecap="round"/>
+  <circle cx="30.9" cy="13.6" r=".85" fill="#26324a"/><circle cx="33.1" cy="13.6" r=".85" fill="#26324a"/>
+</svg><p><b>Ahoy! I'm Captain Milo</b> of the Golden Gull. Ready to hunt some bugs, Captain?</p></div>
 
         <div class="panel">
           <h2>⚓ HOW TO PLAY — EASY AS 1·2·3·4!</h2>
@@ -421,7 +467,7 @@
         </div>
         <div class="panel">
           <p class="phase-title">🗺️ Hide yer ships, Captain — this map is TOP SECRET!</p>
-          <div class="milo"><span class="face">🧭</span><span><b>Captain Milo:</b> Tap a ship, tap the sea to hide her, spin her with ROTATE. Tap a placed ship to pick her back up — secret map, no peeking!</span></div>
+          <div class="milo"><span class="face">🏴‍☠️</span><span><b>Captain Milo:</b> Tap a ship, tap the sea to hide her, spin her with ROTATE. Tap a placed ship to pick her back up — secret map, no peeking!</span></div>
           <div id="fleet-list"></div>
           <div class="claimrow">
             <button class="btn" id="btn-rotate" type="button">🔄 ROTATE SHIP!</button>
@@ -2461,7 +2507,7 @@ println!("{}", total);`,
         const n = (G ? (G.round * 5 + G.match * 13) : 0) + (salt || 0);
         return arr[((n % arr.length) + arr.length) % arr.length];
       }
-      function miloSays(line){ return '<div class="milo"><span class="face">🧭</span><span><b>Captain Milo:</b> ' + line + '</span></div>'; }
+      function miloSays(line){ return '<div class="milo"><span class="face">🏴‍☠️</span><span><b>Captain Milo:</b> ' + line + '</span></div>'; }
       const $ = id => document.getElementById(id);
       const setup = { room: "", lang: "python", level: "beginner", side: 1, mode: "crew" };
       let G = null;
