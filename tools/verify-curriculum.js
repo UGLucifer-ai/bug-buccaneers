@@ -1,5 +1,5 @@
 // node tools/verify-curriculum.js [seeds] [lang,lang]  — compiles/runs every generated buggy + fixed snippet
-for (const f of ["curriculum", "curriculum-more", "curriculum-langs", "curriculum-ess", "curriculum-sql"]) { try { require("../" + f + ".js"); } catch (e) { if (!/Cannot find module/.test(e.message)) throw e; } }
+for (const f of ["curriculum", "curriculum-more", "curriculum-langs", "curriculum-ess", "curriculum-sql", "curriculum-levels"]) { try { require("../" + f + ".js"); } catch (e) { if (!/Cannot find module/.test(e.message)) throw e; } }
 const CURRICULUM = globalThis.BB_CURRICULUM, makeLesson = globalThis.BB_makeLesson || require("../curriculum.js").makeLesson;
 const { execFileSync } = require("child_process"); const fs = require("fs"); const path = require("path");
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
@@ -34,7 +34,7 @@ function run(lang, code, stdin, setup) {
   } catch (e) { return { ok: false, out: (e.stdout || "").toString().trim(), err: ((e.stderr || "").toString() + e.message).split("\n").filter(Boolean).slice(0, 3).join(" / ") }; }
   finally { fs.rmSync(dir, { recursive: true, force: true }); }
 }
-for (const lang of Object.keys(CURRICULUM)) { if (ONLY && !ONLY.includes(lang)) continue;
+if (!process.env.LEVELS) for (const lang of Object.keys(CURRICULUM)) { if (ONLY && !ONLY.includes(lang)) continue;
   const SEEDS = Math.min(ARG, SLOW[lang] || ARG);
   CURRICULUM[lang].forEach((C, ci) => C.v.forEach((_, vi) => {
     const seen = new Set();
@@ -48,5 +48,26 @@ for (const lang of Object.keys(CURRICULUM)) { if (ONLY && !ONLY.includes(lang)) 
     }
     variety[lang + " | " + C.k] = (variety[lang + " | " + C.k] || 0) + seen.size;
   }));
+}
+if (process.env.LEVELS) for (const lang of Object.keys(globalThis.BB_TPL || {})) { if (ONLY && !ONLY.includes(lang)) continue;
+  const SEEDS = Math.min(ARG, SLOW[lang] || ARG);
+  for (const level of ["beginner", "expert"]) (globalThis.BB_TPL[lang][level] || []).forEach((_, ti) => {
+    const seen = new Set();
+    for (let s = 1; s <= SEEDS; s++) {
+      const p = globalThis.BB_makeTpl(lang, level, ti, mulberry32(s * 104729 + ti * 17 + (level === "expert" ? 5 : 0)));
+      seen.add(p.c); n++;
+      const nl = p.c.split("\n").length, [lo, hi] = level === "beginner" ? [8, 15] : [15, 25];
+      const probs = [];
+      if (nl < lo || nl > hi) probs.push("lines=" + nl);
+      if (!p.w || p.w.length < 2 || new Set([p.x.trim(), p.c.split("\n")[p.b].trim(), ...p.w.map(x => x.trim())]).size < 4) probs.push("decoys not distinct");
+      const want = String(p.out).trim();
+      const fx = run(lang, p.fixedCode, p.stdin), bg = run(lang, p.c, p.stdin);
+      if (!(fx.ok && fx.out === want)) probs.push("fixed " + JSON.stringify({ want, got: fx.out, err: fx.err }));
+      if (bg.ok && bg.out === want) probs.push("buggy passes");
+      p.decoys.forEach((d, i) => { const r = run(lang, d, p.stdin); if (r.ok && r.out === want) probs.push("decoy " + i + " passes: " + p.w[i]); });
+      if (probs.length) { bad++; console.log("FAIL", lang, level, ti, p.n, probs.join(" | ")); }
+    }
+    variety[lang + " | " + level + " " + ti] = seen.size;
+  });
 }
 console.log("checked", n, "failures", bad); if (process.env.V) console.log(JSON.stringify(variety, null, 1));

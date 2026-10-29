@@ -597,6 +597,7 @@
 <script src="curriculum-langs.js"></script>
 <script src="curriculum-sql.js"></script>
 <script src="curriculum-ess.js"></script>
+<script src="curriculum-levels.js"></script>
     <script>
       "use strict";
       /* ============ deterministic PRNG (the "sync" engine) ============ */
@@ -2641,6 +2642,7 @@ println!("{}", total);`,
       function seenKey(){ return "bb-seen-" + setup.lang + "-" + setup.level; }
       function seenGet(){ try { return JSON.parse(localStorage.getItem(seenKey()) || "{}") || {}; } catch (e) { return {}; } }
       function seenPut(o){ try { localStorage.setItem(seenKey(), JSON.stringify(o)); } catch (e) {} }
+      function hasTpl(){ return setup.level !== "novice" && window.BB_TPL && window.BB_TPL[setup.lang] && (window.BB_TPL[setup.lang][setup.level] || []).length > 0; }
       function hasCurriculum(){ return setup.level === "novice" && window.BB_CURRICULUM && !!window.BB_CURRICULUM[setup.lang]; }
       function buildChallenges(){
         const bank = BANKS[setup.lang][setup.level];
@@ -2687,6 +2689,20 @@ println!("{}", total);`,
           G.challengeIndex = ci;
           G.challenge = window.BB_makeLesson(setup.lang, ci, vi, rng);
           G.orderPos++;
+        } else if (hasTpl() && ((G.tplStep = (G.tplStep || 0) + 1) % 2 === 1 || !bank || !bank.length)){
+          // BEGINNER / EXPERT: every other round is a freshly generated whole program with hand-written decoys
+          const TL = window.BB_TPL[setup.lang][setup.level];
+          const rng = isSolo() ? Math.random : mulberry32(hashSeed(matchKey("|tpl" + G.tplStep)));
+          let ti;
+          if (isSolo()){
+            const seen = seenGet(); const list = seen.tpl || [];
+            let pool = TL.map((_, i) => i).filter(i => list.indexOf(i) < 0);
+            if (!pool.length){ pool = TL.map((_, i) => i); seen.tpl = []; }
+            ti = pool[Math.floor(Math.random() * pool.length)];
+            seen.tpl = (seen.tpl || []).concat([ti]); seenPut(seen);
+          } else ti = Math.floor(rng() * TL.length);
+          G.challengeIndex = ti;
+          G.challenge = window.BB_makeTpl(setup.lang, setup.level, ti, rng);
         } else {
         G.challengeIndex = G.order[G.orderPos];
         G.challenge = bank[G.challengeIndex];
