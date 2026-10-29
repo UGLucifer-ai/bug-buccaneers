@@ -1,5 +1,5 @@
 // node tools/verify-curriculum.js [seeds] [lang,lang]  — compiles/runs every generated buggy + fixed snippet
-for (const f of ["curriculum", "curriculum-more", "curriculum-langs", "curriculum-ess", "curriculum-sql", "curriculum-levels"]) { try { require("../" + f + ".js"); } catch (e) { if (!/Cannot find module/.test(e.message)) throw e; } }
+for (const f of ["curriculum", "curriculum-more", "curriculum-langs", "curriculum-ess", "curriculum-sql", "curriculum-levels", "curriculum-levels2"]) { try { require("../" + f + ".js"); } catch (e) { if (!/Cannot find module/.test(e.message)) throw e; } }
 const CURRICULUM = globalThis.BB_CURRICULUM, makeLesson = globalThis.BB_makeLesson || require("../curriculum.js").makeLesson;
 const { execFileSync } = require("child_process"); const fs = require("fs"); const path = require("path");
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
@@ -61,10 +61,10 @@ if (process.env.LEVELS) for (const lang of Object.keys(globalThis.BB_TPL || {}))
       if (nl < lo || nl > hi) probs.push("lines=" + nl);
       if (!p.w || p.w.length < 2 || new Set([p.x.trim(), p.c.split("\n")[p.b].trim(), ...p.w.map(x => x.trim())]).size < 4) probs.push("decoys not distinct");
       const want = String(p.out).trim();
-      const fx = run(lang, p.fixedCode, p.stdin), bg = run(lang, p.c, p.stdin);
+      const fx = run(lang, p.fixedCode, p.stdin, p.setup), bg = run(lang, p.c, p.stdin, p.setup);
       if (!(fx.ok && fx.out === want)) probs.push("fixed " + JSON.stringify({ want, got: fx.out, err: fx.err }));
       if (bg.ok && bg.out === want) probs.push("buggy passes");
-      p.decoys.forEach((d, i) => { const r = run(lang, d, p.stdin); if (r.ok && r.out === want) probs.push("decoy " + i + " passes: " + p.w[i]); });
+      p.decoys.forEach((d, i) => { const r = run(lang, d, p.stdin, p.setup); if (r.ok && r.out === want) probs.push("decoy " + i + " passes: " + p.w[i]); });
       if (probs.length) { bad++; console.log("FAIL", lang, level, ti, p.n, probs.join(" | ")); }
     }
     variety[lang + " | " + level + " " + ti] = seen.size;

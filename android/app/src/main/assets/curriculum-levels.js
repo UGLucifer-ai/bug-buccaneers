@@ -160,7 +160,7 @@
   function makeTpl(lang, level, ti, rng) {
     const raw = T[lang][level][ti](R(rng));
     const fixed = raw.lines.slice(); fixed[raw.b] = raw.x;
-    return { n: raw.n, c: raw.lines.join("\n"), b: raw.b, x: raw.x, w: raw.w, f: raw.f, e: raw.e, l: raw.l, out: raw.out, stdin: raw.stdin || "", fixedCode: fixed.join("\n"), gen: true, tpl: lang + ":" + level + ":" + ti, decoys: raw.w.map(d => { const L = raw.lines.slice(); L[raw.b] = d; return L.join("\n"); }) };
+    return { n: raw.n, c: raw.lines.join("\n"), b: raw.b, x: raw.x, w: raw.w, f: raw.f, e: raw.e, l: raw.l, out: raw.out, stdin: raw.stdin || "", setup: raw.setup, sc: raw.sc, fixedCode: fixed.join("\n"), gen: true, tpl: lang + ":" + level + ":" + ti, decoys: raw.w.map(d => { const L = raw.lines.slice(); L[raw.b] = d; return L.join("\n"); }) };
   }
   root.BB_TPL = T; root.BB_makeTpl = makeTpl;
   if (typeof module !== "undefined") module.exports = { T, makeTpl };
