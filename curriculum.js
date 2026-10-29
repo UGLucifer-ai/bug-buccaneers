@@ -227,10 +227,12 @@
     const C = CURRICULUM[lang][ci]; const r = R(rng);
     const raw = C.v[vi](r);
     const p = done(r, raw, COMMENT[lang]);
+    if (raw.setup) p.setup = raw.setup;
     p.k = C.k; p.m = C.m; p.ex = C.ex; p.vid = ci + ":" + vi;
     return p;
   }
   root.BB_CURRICULUM = CURRICULUM;
+  root.BB_COMMENT = COMMENT;
   root.BB_makeLesson = makeLesson;
   if (typeof module !== "undefined") module.exports = { CURRICULUM, makeLesson };
 })(typeof window !== "undefined" ? window : globalThis);
