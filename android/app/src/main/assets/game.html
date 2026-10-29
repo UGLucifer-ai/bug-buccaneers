@@ -318,6 +318,45 @@
       .toast{ position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); background:#ffffff; border:3px solid var(--sun); color:var(--ink); font-size:14.5px; font-weight:700; padding:12px 16px; border-radius:16px; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:60; max-width:92vw; text-align:center; line-height:1.55; box-shadow:0 8px 0 rgba(11,79,134,.2); }
       .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
       @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+      /* ============ LEVEL SEAS — a look per level (fleet + battle screens) ============ */
+      body.sea-beginner{ background:
+          radial-gradient(160px 70px at 15% 70px, rgba(255,255,255,.95), rgba(255,255,255,0) 70%),
+          radial-gradient(220px 80px at 65% 110px, rgba(235,242,248,.9), rgba(235,242,248,0) 70%),
+          radial-gradient(200px 70px at 35% 210px, rgba(225,235,244,.8), rgba(225,235,244,0) 70%),
+          linear-gradient(180deg, #a9c8dc 0%, #9cc7e2 32%, #3f93c9 68%, #1d6fae 100%); }
+      body.sea-beginner{ --water:#7fc2e8; --water2:#bfe3f5; }
+      body.sea-beginner .sea-decor .wave{ animation-duration:4s !important; }
+      body.sea-expert{ background:
+          radial-gradient(300px 120px at 20% 60px, rgba(60,66,90,.95), rgba(60,66,90,0) 70%),
+          radial-gradient(320px 120px at 80% 120px, rgba(45,50,72,.95), rgba(45,50,72,0) 70%),
+          linear-gradient(180deg, #232a3d 0%, #2f3b55 35%, #1c3554 70%, #0d1f36 100%); }
+      body.sea-expert{ --water:#4f7ea8; --water2:#7ea6c8; }
+      body.sea-expert h2, body.sea-expert .board-title h3{ color:#eaf2ff; }
+      #weather{ position:fixed; inset:0; pointer-events:none; z-index:0; display:none; overflow:hidden; }
+      body.sea-expert #weather{ display:block; }
+      body.sea-expert main, body.sea-expert section{ position:relative; z-index:1; }
+      #weather .rain{ position:absolute; inset:-100px 0 0 0; background-image:repeating-linear-gradient(105deg, rgba(200,220,255,.0) 0 14px, rgba(200,220,255,.35) 14px 15px); background-size:60px 60px; animation:rainfall .45s linear infinite; opacity:.7; }
+      @keyframes rainfall{ from{ transform:translateY(0);} to{ transform:translateY(60px);} }
+      #weather .flash{ position:absolute; inset:0; background:#ffffff; opacity:0; animation:lightning 7s infinite; }
+      @keyframes lightning{ 0%,89%,100%{opacity:0;} 90%{opacity:.55;} 91%{opacity:0;} 93%{opacity:.35;} 94%{opacity:0;} }
+      body.sea-novice{ --water:#b8ecff; --water2:#e9fbff; }
+      @media (prefers-reduced-motion: reduce){ #weather .rain{ opacity:.25; } #weather .flash{ display:none; } }
+      .board.big .cell{ font-size:12px; border-radius:7px; border-width:1.5px; }
+      .board.big{ gap:2px; }
+      .board.big .axis{ font-size:10px; }
+      /* ============ Milo coaching + fix choices ============ */
+      .milo.hint{ background:#fff8e1; border:2px dashed var(--sun); }
+      .fixchoices{ display:grid; gap:10px; margin-top:10px; }
+      .fixchoice{ text-align:left; font-family:var(--mono); font-size:14px; padding:12px 14px; border-radius:14px; border:3px solid #cfe8f7; background:#ffffff; color:var(--ink); cursor:pointer; white-space:pre-wrap; box-shadow:0 4px 0 rgba(11,79,134,.12); }
+      .fixchoice:hover{ border-color:var(--sun); }
+      .lesson-card{ background:#fffdf3; border:3px solid #ffd166; border-radius:18px; padding:12px 14px; margin:8px 0; }
+      .lesson-card .lc-title{ font-weight:800; color:#b45309; letter-spacing:.04em; }
+      .lesson-card pre{ background:#0f2740; color:#e6f4ff; border-radius:10px; padding:8px 10px; font-family:var(--mono); font-size:13px; margin:8px 0 0; white-space:pre-wrap; }
+      .tracker{ display:flex; flex-wrap:wrap; gap:5px; margin:6px 0 2px; }
+      .tracker span{ font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; background:#e3f2fb; color:#0b5a72; }
+      .tracker span.done{ background:#c7f0c2; color:#1b6b1b; }
+      .tracker span.now{ background:var(--sun); color:#3b2500; }
+      .xtimer{ font-weight:800; color:#b91c1c; }
     </style>
   </head>
   <body>
@@ -332,7 +371,7 @@
       <span class="sea-wave w2"></span>
     </div>
     <div class="wrap">
-      <div class="sound-row"><button class="help-btn" id="btn-help" type="button" aria-label="How to play">?</button><button class="sound-toggle sound-pill" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊 SOUND ON</button></div>
+      <div class="sound-row"><button class="help-btn" id="btn-help" type="button" aria-label="How to play">?</button><button class="sound-toggle sound-pill" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊 SOUND ON</button><button class="sound-pill" id="btn-reset-progress" type="button" style="margin-left:6px" aria-label="Reset progress">↺ RESET PROGRESS</button></div>
 
       <!-- ================= SETUP ================= -->
       <section id="screen-setup" class="setup2">
@@ -460,6 +499,7 @@
       </section>
 
       <!-- ================= GAME ================= -->
+      <div id="weather" aria-hidden="true"><div class="rain"></div><div class="flash"></div></div>
       <section id="screen-game" class="hidden">
         <div class="topbar">
           <span class="chip"><span id="chip-room-label">🗝️ CREW CODE</span> <b id="chip-room">—</b></span>
@@ -552,6 +592,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="curriculum.js"></script>
     <script>
       "use strict";
       /* ============ deterministic PRNG (the "sync" engine) ============ */
@@ -611,32 +652,38 @@
       }
 
       /* ============ fleet generation (seeded, identical on both phones) ============ */
-      const SHIP_DEFS = [
-        { name: "Golden Gull", len: 4 },
-        { name: "Wave Dancer", len: 3 },
-        { name: "Salty Turtle", len: 3 },
-        { name: "Little Pearl", len: 2 }
-      ];
+      /* Each level sails its own sea: Novice 6x6 / 3 ships, Beginner 8x8 / 4,
+         Expert 10x10 / 5. Both crew phones pick the same level, so both
+         charts are always the same size. */
+      const LEVEL_SEAS = {
+        novice:   { n: 6,  ships: [ { name: "Wave Dancer", len: 3 }, { name: "Salty Turtle", len: 2 }, { name: "Little Pearl", len: 2 } ] },
+        beginner: { n: 8,  ships: [ { name: "Golden Gull", len: 4 }, { name: "Wave Dancer", len: 3 }, { name: "Salty Turtle", len: 3 }, { name: "Little Pearl", len: 2 } ] },
+        expert:   { n: 10, ships: [ { name: "Storm Kraken", len: 5 }, { name: "Golden Gull", len: 4 }, { name: "Wave Dancer", len: 3 }, { name: "Salty Turtle", len: 3 }, { name: "Little Pearl", len: 2 } ] }
+      };
+      function seaOf(){ return LEVEL_SEAS[(typeof setup !== "undefined" && LEVEL_SEAS[setup.level]) ? setup.level : "beginner"]; }
+      function BN(){ return seaOf().n; }
+      function shipDefs(){ return seaOf().ships; }
       function buildFleet(seedStr){
         const rng = mulberry32(hashSeed(seedStr));
         const occ = new Set(); const ships = [];
-        for (const d of SHIP_DEFS){
+        const N = BN();
+        for (const d of shipDefs()){
           let placed = false, guard = 0;
           while (!placed && guard++ < 1000){
             const horiz = rng() < 0.5;
-            const r = Math.floor(rng() * 8), c = Math.floor(rng() * 8);
+            const r = Math.floor(rng() * N), c = Math.floor(rng() * N);
             const cells = []; let ok = true;
             for (let k = 0; k < d.len; k++){
               const rr = horiz ? r : r + k, cc = horiz ? c + k : c;
-              if (rr > 7 || cc > 7 || occ.has(rr * 8 + cc)){ ok = false; break; }
-              cells.push(rr * 8 + cc);
+              if (rr > N - 1 || cc > N - 1 || occ.has(rr * N + cc)){ ok = false; break; }
+              cells.push(rr * N + cc);
             }
             if (ok){ cells.forEach(x => occ.add(x)); ships.push({ name: d.name, len: d.len, cells: cells }); placed = true; }
           }
         }
         return ships;
       }
-      function coordName(idx){ return "ABCDEFGH"[idx % 8] + (Math.floor(idx / 8) + 1); }
+      function coordName(idx){ const N = BN(); return "ABCDEFGHIJ"[idx % N] + (Math.floor(idx / N) + 1); }
 
       /* ============ SHIP ART — cute cartoon pirate ships, pure inline SVG ============
          One connected vessel drawn across the ship's cells: wooden hull, mast,
@@ -647,7 +694,8 @@
         "Golden Gull":  { sail: "#ffb703", emblem: "star" },
         "Wave Dancer":  { sail: "#2ec4b6", emblem: "wave" },
         "Salty Turtle": { sail: "#8ac926", emblem: "turtle" },
-        "Little Pearl": { sail: "#ff8fab", emblem: "pearl" }
+        "Little Pearl": { sail: "#ff8fab", emblem: "pearl" },
+        "Storm Kraken": { sail: "#7b2cbf", emblem: "wave" }
       };
       function emblemSVG(kind){
         if (kind === "wave") return '<path d="M-7,1 Q-3.5,-4.5 0,1 T7,1" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>';
@@ -2561,7 +2609,8 @@ println!("{}", total);`,
       /* Solo rival: Captain Barnaclebeard of the Rusty Bucket. Race time (ms) the
          computer needs to "find" the bug, and how often it aims smartly after a hit. */
       const RIVAL_NAME = "Captain Barnaclebeard";
-      const RACE_MS = { novice: 45000, beginner: 26000, expert: 13000 };
+      const RACE_MS = { novice: 60000, beginner: 40000, expert: 30000 };
+      const CREW_EXPERT_MS = 45000; // Expert crew games get their own countdown (solo uses the sonar)
       const AI_SMART = { novice: 0.4, beginner: 0.65, expert: 0.9 };
       function isSolo(){ return setup.mode === "solo"; }
 
@@ -2583,13 +2632,25 @@ println!("{}", total);`,
           raceEndsAt: 0, raceTotal: 0, aiScheduled: false, aiFireAt: 0
         };
       }
+      /* No-repeat memory (solo): puzzles already seen per language + level live in
+         localStorage, so unseen ones are always dealt first. Reset in settings. */
+      function seenKey(){ return "bb-seen-" + setup.lang + "-" + setup.level; }
+      function seenGet(){ try { return JSON.parse(localStorage.getItem(seenKey()) || "{}") || {}; } catch (e) { return {}; } }
+      function seenPut(o){ try { localStorage.setItem(seenKey(), JSON.stringify(o)); } catch (e) {} }
+      function hasCurriculum(){ return setup.level === "novice" && window.BB_CURRICULUM && !!window.BB_CURRICULUM[setup.lang]; }
       function buildChallenges(){
         const bank = BANKS[setup.lang][setup.level];
         const rng = mulberry32(hashSeed(matchKey("|challenges")));
         G.order = bank.map((_, i) => i);
+        G.lessonStep = 0;
         for (let i = G.order.length - 1; i > 0; i--){
           const j = Math.floor(rng() * (i + 1));
           const t = G.order[i]; G.order[i] = G.order[j]; G.order[j] = t;
+        }
+        if (isSolo() && !hasCurriculum()){
+          let seen = seenGet();
+          if (G.order.every(i => seen["b" + i])){ seen = {}; seenPut(seen); } // pool exhausted: start fresh
+          G.order.sort((a, b) => (seen["b" + a] ? 1 : 0) - (seen["b" + b] ? 1 : 0));
         }
         G.rngChal = rng; G.orderPos = 0;
         nextChallenge();
@@ -2605,10 +2666,31 @@ println!("{}", total);`,
           }
           G.orderPos = 0;
         }
+        if (hasCurriculum()){
+          // NOVICE curriculum: fixed lesson order, freshly varied puzzle every time
+          const CUR = window.BB_CURRICULUM[setup.lang];
+          const ci = (G.lessonStep || 0) % CUR.length;
+          G.lessonStep = (G.lessonStep || 0) + 1;
+          const rng = isSolo() ? Math.random : mulberry32(hashSeed(matchKey("|lesson" + G.lessonStep)));
+          let vi;
+          if (isSolo()){
+            const seen = seenGet(); const key = "c" + ci; const list = seen[key] || [];
+            let pool = CUR[ci].v.map((_, i) => i).filter(i => list.indexOf(i) < 0);
+            if (!pool.length){ pool = CUR[ci].v.map((_, i) => i); seen[key] = []; }
+            vi = pool[Math.floor(Math.random() * pool.length)];
+            seen[key] = (seen[key] || []).concat([vi]); seenPut(seen);
+          } else vi = Math.floor(rng() * CUR[ci].v.length);
+          G.challengeIndex = ci;
+          G.challenge = window.BB_makeLesson(setup.lang, ci, vi, rng);
+          G.orderPos++;
+        } else {
         G.challengeIndex = G.order[G.orderPos];
         G.challenge = bank[G.challengeIndex];
         G.orderPos++;
+        if (isSolo()){ const seen = seenGet(); const k = "b" + G.challengeIndex; if (!seen[k]){ seen[k] = 1; seenPut(seen); } }
+        }
         G.finder = null; G.finderCorrect = null; G.pickedLine = null; G.shooter = null; G.pendingShot = null;
+        G.hintShown = setup.level === "novice"; G.retryUsed = false; G.pickedFix = null; G.xEndsAt = 0;
         G.phase = "race";
         G.aiScheduled = false;
         if (isSolo()){
@@ -2618,6 +2700,78 @@ println!("{}", total);`,
         } else { G.raceEndsAt = 0; G.raceTotal = 0; }
       }
 
+
+      /* ============ LEVEL COACHING — Milo coaches on EVERY level ============ */
+      function setSeaTheme(level){
+        document.body.classList.remove("sea-novice", "sea-beginner", "sea-expert");
+        if (level) document.body.classList.add("sea-" + level);
+      }
+      /* Milo's gentle clue, built from the bug's own name and fault text. */
+      function miloHint(ch){
+        const t = (ch.n + " " + ch.f).toLowerCase();
+        let clue = "read it slowly, word by word, like a treasure map.";
+        if (/colon|semicolon/.test(t)) clue = "check the very END of that line — is a little punctuation mark missing?";
+        else if (/typo|spell|misspel|name|undefined|not defined/.test(t)) clue = "check the spelling of every name on it — do they match the rest of the code?";
+        else if (/quote|string/.test(t)) clue = "look at the quote marks and text — words and numbers are different treasures!";
+        else if (/bracket|paren|brace|indent/.test(t)) clue = "count the brackets and spaces — does every opener have a closer?";
+        else if (/==|equal|compar|assign/.test(t)) clue = "look at the equals signs — one = stores, == compares!";
+        else if (/loop|range|off-by|index|last|first/.test(t)) clue = "check where the counting starts and stops!";
+        else if (/[+\-*\/]|math|divid|multipl|add/.test(t)) clue = "check the math — is it doing the right sum?";
+        return "Psst, matey! Peek at line " + (ch.b + 1) + " and " + clue;
+      }
+      /* Fix choices (Beginner + Expert): the golden fix plus 2 plausible wrong
+         fixes. Puzzles may carry hand-written wrong fixes in w:[..]; otherwise
+         they are generated: the line left as-is, and a small mutation of the fix. */
+      function mutateFix(x){
+        const subs = [
+          [/==/, "="], [/===/, "=="], [/<=/, "<"], [/>=/, ">"], [/ < /, " <= "], [/ > /, " >= "],
+          [/ \+ /, " - "], [/ - /, " + "], [/ \* /, " + "], [/\band\b/, "or"], [/&&/, "||"],
+          [/\bTrue\b/, "False"], [/\btrue\b/, "false"], [/:\s*$/, ""], [/;\s*$/, ""],
+          [/\)\s*$/, ""], [/"/g, "'"], [/\(/, " "], [/(\d+)/, m => String(parseInt(m, 10) + 1)]
+        ];
+        const out = [];
+        for (const [re, to] of subs){
+          if (re.test(x)){ const y = x.replace(re, to); if (y !== x && out.indexOf(y) < 0) out.push(y); }
+        }
+        return out;
+      }
+      function fixChoices(ch){
+        if (ch._fc !== undefined) return ch._fc;
+        const right = ch.x.trim();
+        const buggy = (ch.c.split("\n")[ch.b] || "").trim();
+        let wrong = (ch.w || []).slice();
+        if (wrong.length < 2 && buggy && buggy !== right && wrong.indexOf(buggy) < 0) wrong.push(buggy);
+        for (const m of mutateFix(right)){ if (wrong.length >= 2) break; if (m.trim() && m.trim() !== right && wrong.indexOf(m.trim()) < 0) wrong.push(m.trim()); }
+        if (wrong.length < 2){ ch._fc = null; return null; } // falls back to line-tap only
+        const opts = [{ t: right, ok: true }, { t: wrong[0], ok: false }, { t: wrong[1], ok: false }];
+        // stable shuffle keyed to the puzzle so both crew phones show the same order
+        const rng = mulberry32(hashSeed(setup.lang + "|" + ch.n));
+        for (let i = opts.length - 1; i > 0; i--){ const j = Math.floor(rng() * (i + 1)); const t = opts[i]; opts[i] = opts[j]; opts[j] = t; }
+        ch._fc = opts; return opts;
+      }
+      function usesFixChoices(){ return setup.level !== "novice" && !!fixChoices(G.challenge); }
+      let xTimer = null;
+      function stopXTimer(){ if (xTimer){ clearInterval(xTimer); xTimer = null; } }
+      function startCrewExpertTimer(){
+        stopXTimer();
+        if (isSolo() || setup.level !== "expert" || !G) return;
+        if (!G.xEndsAt) G.xEndsAt = Date.now() + CREW_EXPERT_MS;
+        xTimer = setInterval(() => {
+          if (!G || (G.phase !== "pick" && G.phase !== "fix")){ stopXTimer(); return; }
+          const left = Math.max(0, G.xEndsAt - Date.now());
+          const el = $("xtimer"); if (el) el.textContent = Math.ceil(left / 1000) + "s";
+          if (left <= 0){ stopXTimer(); G.finderCorrect = false; G.shooter = "opp"; G.pickedLine = G.pickedLine === null ? -1 : G.pickedLine; toast("⏰ Time's up, matey! Milo will show you the bug — you'll get the next one!"); showExplanation(); }
+        }, 250);
+      }
+      function xTimerHtml(){ return (!isSolo() && setup.level === "expert") ? '<p class="phase-sub">⏱️ Storm clock: <span class="xtimer" id="xtimer">' + Math.ceil(CREW_EXPERT_MS / 1000) + 's</span></p>' : ""; }
+      /* Expert: after a wrong guess Milo offers a hint and one more try. */
+      function expertRetry(){
+        G.retryUsed = true; G.hintShown = true;
+        sfxThud(); vibrate(120);
+        G.phase = "pick"; G.pickedLine = null;
+        renderPhase();
+        toast("🧭 Not quite, matey — Captain Milo has a hint for ye. One more try!");
+      }
       /* ============ helpers ============ */
       function shipAt(fleet, cell){ return fleet.find(s => s.cells.includes(cell)) || null; }
       function hitsOn(ship, shotMap){ return ship.cells.filter(c => shotMap.get(c) === "hit" || shotMap.get(c) === "sunk").length; }
@@ -2671,7 +2825,7 @@ println!("{}", total);`,
         raceTick = 0;
         raceTimer = setInterval(() => {
           if (soloPaused){ stopRaceTimer(); return; }
-          if (!G || (G.phase !== "race" && G.phase !== "pick")){ stopRaceTimer(); return; }
+          if (!G || (G.phase !== "race" && G.phase !== "pick" && G.phase !== "fix")){ stopRaceTimer(); return; }
           if (document.hidden){ G.raceEndsAt += 100; return; } // sonar pauses while the tab is away — no cheap losses
           const left = G.raceEndsAt - Date.now();
           const done = Math.min(100, Math.max(0, (1 - left / G.raceTotal) * 100));
@@ -2684,7 +2838,7 @@ println!("{}", total);`,
       }
       function rivalWinsRace(){
         if (!G || G.over) return;
-        if (G.phase !== "race" && G.phase !== "pick") return;
+        if (G.phase !== "race" && G.phase !== "pick" && G.phase !== "fix") return;
         G.finder = "opp"; G.finderCorrect = true; G.shooter = "opp"; G.pickedLine = null;
         vibrate([90, 50, 90]);
         toast("⏰ TOO SLOW, CAPTAIN! " + RIVAL_NAME + "'s sonar found the bug first — brace for his cannonball, and soak up the lesson!");
@@ -2794,11 +2948,12 @@ println!("{}", total);`,
           : LANG_LABEL[setup.lang] + " · " + LEVEL_LABEL[setup.level] + " · YOU: PIRATE " + setup.side + " ⚓";
         $("chip-round").textContent = G.round;
         $("log-title").textContent = "📜 BATTLE LOG";
-        const ea = G.enemyFleet ? afloat(G.enemyFleet, G.myShots) : SHIP_DEFS.length - G.sunkEnemyShips.size, ma = afloat(G.myFleet, G.shotsOnMe);
+        const ea = G.enemyFleet ? afloat(G.enemyFleet, G.myShots) : shipDefs().length - G.sunkEnemyShips.size, ma = afloat(G.myFleet, G.shotsOnMe);
         $("stat-enemy").textContent = ea;
         $("stat-mine").textContent = ma;
-        $("pips-enemy").textContent = "▮".repeat(ea) + "▯".repeat(4 - ea);
-        $("pips-mine").textContent = "▮".repeat(ma) + "▯".repeat(4 - ma);
+        const tot = shipDefs().length;
+        $("pips-enemy").textContent = "▮".repeat(ea) + "▯".repeat(Math.max(0, tot - ea));
+        $("pips-mine").textContent = "▮".repeat(ma) + "▯".repeat(Math.max(0, tot - ma));
       }
       function renderCode(pickable){
         const ch = G.challenge; const lines = ch.c.split("\n");
@@ -2823,41 +2978,75 @@ println!("{}", total);`,
           });
         }
       }
+      function coachHtml(){
+        const ch = G.challenge; let h = "";
+        if (setup.level === "novice" && ch.k){
+          const L = hasCurriculum() ? window.BB_CURRICULUM[setup.lang] : BANKS[setup.lang].novice;
+          h += '<div class="tracker">' + L.map((p, i) => '<span class="' + (i === G.challengeIndex ? "now" : (i < G.challengeIndex ? "done" : "")) + '">' + (i + 1) + ". " + esc(p.k) + "</span>").join("") + "</div>";
+          h += '<div class="lesson-card"><div class="lc-title">📘 LESSON ' + (G.challengeIndex + 1) + ": " + esc(ch.k.toUpperCase()) + "</div>" +
+            miloSays(ch.m) + (ch.ex ? "<pre>" + esc(ch.ex) + "</pre>" : "") + "</div>";
+        }
+        if (G.hintShown) h += '<div class="milo hint"><span class="face">🧭</span><span><b>Milo\'s hint:</b> ' + miloHint(ch) + "</span></div>";
+        else if (setup.level === "beginner") h += '<button class="btn ghost" id="btn-askmilo" type="button" style="width:100%;margin-top:8px;">🧭 ASK MILO FOR A HINT (free!)</button>';
+        return h;
+      }
+      function wireCoach(){
+        const b = $("btn-askmilo");
+        if (b) addTap(b, () => { G.hintShown = true; sfxPage(); const box = document.createElement("div"); box.className = "milo hint"; box.innerHTML = '<span class="face">🧭</span><span><b>Milo\'s hint:</b> ' + miloHint(G.challenge) + "</span>"; b.replaceWith(box); });
+      }
       function renderPhase(){
         const area = $("phase-area"); const ch = G.challenge;
         $("explain-area").innerHTML = "";
-        stopRaceTimer();
+        stopRaceTimer(); stopXTimer();
         if (G.phase === "race"){
           if (isSolo()){
             area.innerHTML =
               '<div class="panel fadeup"><p class="phase-title">🐛 ROUND ' + G.round + ' — A BUG IS HIDING IN THE CODE! Race ' + RIVAL_NAME + ' to find it!</p>' +
               miloSays(RIVAL_NAME + " is hunting this bug too — beat his sonar, matey! " + flavor(MILO_ROUND_INTROS, 0)) +
-              '<p class="phase-sub">One sneaky bug hides here. Spot it, smash the golden button, tap the buggy line — <b>before the sonar fills up</b>!</p>' +
+              coachHtml() +
+              '<p class="phase-sub">One sneaky bug hides here. Spot it, smash the golden button, tap the buggy line' + (usesFixChoices() ? ", then pick the right fix" : "") + ' — <b>before the sonar fills up</b>!</p>' +
               '<button class="btn" id="btn-found" type="button" style="width:100%;">🔍 I SPOTTED THE BUG, CAPTAIN!</button>' +
               sonarHtml() + '</div>';
             renderCode(false);
             addTap($("btn-found"), () => { G.finder = "me"; G.phase = "pick"; vibrate(30); renderPhase(); });
+            wireCoach();
             startRaceTimer();
           } else {
             area.innerHTML =
               '<div class="panel fadeup"><p class="phase-title">🐛 ROUND ' + G.round + ' — A BUG IS HIDING IN THE CODE! Race your rival to find it!</p>' +
               miloSays(flavor(MILO_ROUND_INTROS, 0)) +
+              coachHtml() +
               '<p class="phase-sub">One sneaky bug hides here. Spot it first, shout it on your call, smash the golden button!</p>' +
               '<div class="claimrow"><button class="btn" id="btn-found" type="button">🔍 I SPOTTED THE BUG, CAPTAIN!</button>' +
               '<button class="btn ghost" id="btn-oppfound" type="button">🏴‍☠️ My rival spotted it first!</button></div></div>';
             renderCode(false);
             addTap($("btn-found"), () => { G.finder = "me"; G.phase = "pick"; vibrate(30); renderPhase(); });
             addTap($("btn-oppfound"), () => { G.finder = "opp"; G.phase = "oppverdict"; renderPhase(); });
+            wireCoach();
           }
         }
         else if (G.phase === "pick"){
           area.innerHTML =
             '<div class="panel fadeup"><p class="phase-title">🎉 YOU SPOTTED IT FIRST! Now tap the line where the bug is hiding!</p>' +
             miloSays(flavor(MILO_PICK_LINES, 1)) +
-            '<p class="phase-sub">Wrong line = rival fires. Choose wisely!</p>' +
-            (isSolo() ? sonarHtml() : "") + '</div>';
+            coachHtml() +
+            '<p class="phase-sub">' + (usesFixChoices() ? "Tap the buggy line, then pick the right fix from 3 choices!" : "Wrong line = rival fires. Choose wisely!") + '</p>' +
+            xTimerHtml() + (isSolo() ? sonarHtml() : "") + '</div>';
           renderCode(true);
-          if (isSolo()) startRaceTimer();
+          wireCoach();
+          if (isSolo()) startRaceTimer(); else startCrewExpertTimer();
+        }
+        else if (G.phase === "fix"){
+          const opts = fixChoices(ch);
+          area.innerHTML =
+            '<div class="panel fadeup"><p class="phase-title">🎯 RIGHT LINE! Now pick the golden fix for line ' + (ch.b + 1) + '!</p>' +
+            miloSays("Shiver me timbers, ye found the hideout! Which of these lines would make the code work right?") +
+            (G.hintShown ? '<div class="milo hint"><span class="face">🧭</span><span><b>Milo\'s hint:</b> ' + miloHint(ch) + "</span></div>" : "") +
+            '<div class="fixchoices">' + opts.map((o, i) => '<button type="button" class="fixchoice" data-i="' + i + '">' + highlightLine(o.t, setup.lang) + "</button>").join("") + "</div>" +
+            xTimerHtml() + (isSolo() ? sonarHtml() : "") + '</div>';
+          renderCode(false);
+          area.querySelectorAll(".fixchoice").forEach(el => addTap(el, () => pickFix(parseInt(el.dataset.i, 10))));
+          if (isSolo()) startRaceTimer(); else startCrewExpertTimer();
         }
         else if (G.phase === "oppverdict"){
           area.innerHTML =
@@ -2906,9 +3095,22 @@ println!("{}", total);`,
         }
         renderBoards();
       }
+      function pickFix(i){
+        const o = fixChoices(G.challenge)[i];
+        G.pickedFix = o.t;
+        if (!o.ok && setup.level === "expert" && !G.retryUsed){ G.retryUsed = true; G.hintShown = true; sfxThud(); vibrate(120); toast("🧭 Not that fix, matey — Milo has a hint for ye. One more try!"); renderPhase(); return; }
+        G.finderCorrect = o.ok;
+        G.shooter = o.ok ? "me" : "opp";
+        vibrate(o.ok ? [40, 60, 40] : 120);
+        if (o.ok) sfxAha(); else sfxThud();
+        showExplanation();
+      }
       function pickLine(i){
+        const correctLine = (i === G.challenge.b);
+        if (!correctLine && setup.level === "expert" && !G.retryUsed){ expertRetry(); return; }
         G.pickedLine = i;
-        const correct = (i === G.challenge.b);
+        if (correctLine && usesFixChoices()){ G.phase = "fix"; sfxAha(); vibrate(30); renderPhase(); return; }
+        const correct = correctLine;
         G.finderCorrect = correct;
         G.shooter = correct ? "me" : "opp";
         vibrate(correct ? [40, 60, 40] : 120);
@@ -2949,6 +3151,7 @@ println!("{}", total);`,
       let recordedStopping = false; // true while stopVoice() is tearing a clip down, so its error event can't trigger the fallback
       function narrationKey(){
         if (!G || G.challengeIndex === null || G.challengeIndex === undefined) return null;
+        if (G.challenge && G.challenge.gen) return null; // generated lesson: no matching recorded clip, device voice reads it
         return setup.lang + "-" + setup.level + "-" + G.challengeIndex;
       }
       function getMiloAudio(){
@@ -3155,6 +3358,8 @@ println!("{}", total);`,
         const ch = G.challenge;
         let verdict;
         if (G.finder === "me" && G.finderCorrect) verdict = '<div class="verdict good">🎉 ' + flavor(MILO_CHEERS, 0) + (isSolo() ? ' You beat Barnaclebeard\'s sonar fair and square — the cannon shot is YOURS!</div>' : ' You earned the cannon shot!</div>');
+        else if (G.finder === "me" && !G.finderCorrect && G.pickedLine === ch.b) verdict = '<div class="verdict bad">💦 Great try, matey — ye found the right line! That fix wasn\'t quite it, though. The shot passes to ' + (isSolo() ? RIVAL_NAME : "your rival") + '. See the golden fix below 👇</div>';
+        else if (G.finder === "me" && !G.finderCorrect && G.pickedLine < 0) verdict = '<div class="verdict bad">⏰ The storm clock ran out, matey! The bug hid on line ' + (ch.b + 1) + '. Lesson below 👇</div>';
         else if (G.finder === "me" && !G.finderCorrect) verdict = '<div class="verdict bad">💦 ' + flavor(MILO_TEASES, 1) + ' You tapped line ' + (G.pickedLine + 1) + ' — the bug hid on line ' + (ch.b + 1) + '! The shot passes to ' + (isSolo() ? RIVAL_NAME : "your rival") + '. Lesson below 👇</div>';
         else if (G.finder === "opp" && G.finderCorrect && isSolo()) verdict = '<div class="verdict info">⏰ ' + RIVAL_NAME + ' spotted it first — he takes the shot! Lesson below 👇 — snatch the next round back!</div>';
         else if (G.finder === "opp" && G.finderCorrect) verdict = '<div class="verdict info">🏴‍☠️ Your rival found it first — they take the shot. Lesson below 👇</div>';
@@ -3167,6 +3372,7 @@ println!("{}", total);`,
         const listenBtn = '<button class="btn listen" id="btn-listen" type="button" aria-pressed="false">🔊 HEAR CAPTAIN MILO EXPLAIN IT!</button>';
         $("explain-area").innerHTML =
           '<div class="explain">' + verdict +
+          miloSays(G.finderCorrect && G.finder === "me" ? "Great job, matey! Let's make sure ye know WHY — that's what real coders do." : "Great try, matey! Every pirate misses a wave sometimes. Let's learn this one together, nice and slow.") +
           '<div id="exp-title"><h3>📜 Captain\'s Log: The Bug, Explained!</h3>' +
           '<div class="bugname">THE CULPRIT HID ON LINE ' + (ch.b + 1) + ' — BUG NAME: ' + esc(ch.n.toUpperCase()) + '</div></div>' +
           listenBtn +
@@ -3208,11 +3414,14 @@ println!("{}", total);`,
       }
       function renderBoard(el, fleet, shotMap, showShips, interactive, onTap, labelVerb){
         let html = '<span class="axis"></span>';
-        for (let c = 0; c < 8; c++) html += '<span class="axis">' + "ABCDEFGH"[c] + "</span>";
-        for (let r = 0; r < 8; r++){
+        const N = BN();
+        el.style.gridTemplateColumns = "22px repeat(" + N + ",1fr)";
+        el.classList.toggle("big", N >= 10);
+        for (let c = 0; c < N; c++) html += '<span class="axis">' + "ABCDEFGHIJ"[c] + "</span>";
+        for (let r = 0; r < N; r++){
           html += '<span class="axis">' + (r + 1) + "</span>";
-          for (let c = 0; c < 8; c++){
-            const idx = r * 8 + c;
+          for (let c = 0; c < N; c++){
+            const idx = r * N + c;
             const ship = fleet ? shipAt(fleet, idx) : null;
             const res = shotMap.get(idx);
             const artShip = showShips && ship; // this cell is covered by the ship-art overlay
@@ -3294,7 +3503,7 @@ println!("{}", total);`,
           const row = $("mk-ships");
           if (!row) return;
           row.innerHTML = '<p class="phase-sub" style="margin-top:10px;">A whole ship went down?! Which one did they shout? Tap her name!</p>' +
-            '<div class="markrow ships">' + SHIP_DEFS.map(d =>
+            '<div class="markrow ships">' + shipDefs().map(d =>
               '<button class="btn ghost small" type="button" data-sunkship="' + d.name + '"' + (G.sunkEnemyShips.has(d.name) ? " disabled" : "") + '>⚓ ' + d.name + '</button>').join("") + '</div>';
           row.querySelectorAll("button").forEach(b => addTap(b, () => markResult(cell, "sunk", b.dataset.sunkship)));
         });
@@ -3310,7 +3519,7 @@ println!("{}", total);`,
         resultSound(outcome);
         renderAll();
         showResult("💣 YOUR SHOT", cell, outcome, "Marked on yer chart, Captain! Yer rival marked the same square on their secret map — both charts agree, and the next bug race is coming up fast!", () => {
-          if (G.sunkEnemyShips.size >= SHIP_DEFS.length) return endGame(true);
+          if (G.sunkEnemyShips.size >= shipDefs().length) return endGame(true);
           advanceRound();
         });
       }
@@ -3321,7 +3530,8 @@ println!("{}", total);`,
       function pickAiTarget(){
         const shots = G.shotsOnMe;
         const unshot = [];
-        for (let i = 0; i < 64; i++) if (!shots.has(i)) unshot.push(i);
+        const N = BN();
+        for (let i = 0; i < N * N; i++) if (!shots.has(i)) unshot.push(i);
         if (!unshot.length) return -1;
         // hits on ships that are NOT sunk yet
         const openHits = [];
@@ -3332,18 +3542,18 @@ println!("{}", total);`,
         if (openHits.length && Math.random() < AI_SMART[setup.level]){
           const cand = new Set();
           const addN = (idx) => {
-            const r = Math.floor(idx / 8), c = idx % 8;
+            const r = Math.floor(idx / N), c = idx % N;
             [[r-1,c],[r+1,c],[r,c-1],[r,c+1]].forEach(([rr,cc]) => {
-              if (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && !shots.has(rr * 8 + cc)) cand.add(rr * 8 + cc);
+              if (rr >= 0 && rr < N && cc >= 0 && cc < N && !shots.has(rr * N + cc)) cand.add(rr * N + cc);
             });
           };
           openHits.forEach(addN);
           // extend a line when two open hits sit side by side
           const hitSet = new Set(openHits);
           for (const h of openHits){
-            const r = Math.floor(h / 8), c = h % 8;
-            if (c < 7 && hitSet.has(h + 1)){ if (c > 0 && !shots.has(h - 1)) cand.add(h - 1); if (c < 6 && !shots.has(h + 2)) cand.add(h + 2); }
-            if (r < 7 && hitSet.has(h + 8)){ if (r > 0 && !shots.has(h - 8)) cand.add(h - 8); if (r < 6 && !shots.has(h + 16)) cand.add(h + 16); }
+            const r = Math.floor(h / N), c = h % N;
+            if (c < N - 1 && hitSet.has(h + 1)){ if (c > 0 && !shots.has(h - 1)) cand.add(h - 1); if (c < N - 2 && !shots.has(h + 2)) cand.add(h + 2); }
+            if (r < N - 1 && hitSet.has(h + N)){ if (r > 0 && !shots.has(h - N)) cand.add(h - N); if (r < N - 2 && !shots.has(h + 2 * N)) cand.add(h + 2 * N); }
           }
           const list = [...cand];
           if (list.length) return list[Math.floor(Math.random() * list.length)];
@@ -3393,6 +3603,7 @@ println!("{}", total);`,
         if (shipName === "Golden Gull") return "Ye sent the Golden Gull glug-glugging down to Davy Jones' locker — the gulls are already circling, laughing!";
         if (shipName === "Wave Dancer") return "Ye sent the Wave Dancer twirling down to Davy Jones' locker — she's still dancing, just underwater now!";
         if (shipName === "Little Pearl") return "Ye sent the Little Pearl plopping down to Davy Jones' locker — pearls come from the sea, so she's basically home!";
+        if (shipName === "Storm Kraken") return "Ye sent the mighty Storm Kraken swirling down to Davy Jones' locker — the biggest ship on the stormy sea!";
         return "Ye sent the " + shipName + " to Davy Jones' locker — in the silliest, splashiest way possible!";
       }
       function showResult(label, cell, outcome, sub, cb){
@@ -3554,7 +3765,8 @@ println!("{}", total);`,
          room-code sync now covers challenge order only. */
       let P = null;
       function openPlacement(matchNo){
-        P = { matchNo: matchNo || 1, orient: "h", sel: SHIP_DEFS[0].name, placed: new Map(), orients: new Map() };
+        setSeaTheme(setup.level);
+        P = { matchNo: matchNo || 1, orient: "h", sel: shipDefs()[0].name, placed: new Map(), orients: new Map() };
         $("screen-setup").classList.add("hidden");
         $("screen-game").classList.add("hidden");
         $("screen-place").classList.remove("hidden");
@@ -3566,10 +3778,10 @@ println!("{}", total);`,
         return null;
       }
       function placedFleetArray(){
-        return SHIP_DEFS.filter(d => P.placed.has(d.name)).map(d => ({ name: d.name, len: d.len, cells: P.placed.get(d.name).slice() }));
+        return shipDefs().filter(d => P.placed.has(d.name)).map(d => ({ name: d.name, len: d.len, cells: P.placed.get(d.name).slice() }));
       }
       function renderPlacement(){
-        $("fleet-list").innerHTML = SHIP_DEFS.map(d => {
+        $("fleet-list").innerHTML = shipDefs().map(d => {
           const placed = P.placed.has(d.name), sel = P.sel === d.name;
           return '<button type="button" class="fleet-item' + (sel ? " sel" : "") + (placed ? " placed" : "") + '" data-ship="' + d.name + '">' +
             '<span class="fi-ship">' + shipSVG({ name: d.name, len: d.len, cells: [] }, null, false) + '</span>' +
@@ -3587,21 +3799,24 @@ println!("{}", total);`,
           renderPlacement();
         }));
         $("btn-rotate").textContent = "🔄 ROTATE SHIP! (now pointing: " + (P.orient === "h" ? "sideways ↔" : "up-and-down ↕") + ")";
-        $("place-progress").textContent = P.placed.size + " of 4 ships placed";
-        $("btn-ready").disabled = P.placed.size < SHIP_DEFS.length;
-        $("btn-ready").textContent = P.placed.size < SHIP_DEFS.length
-          ? "🚀 READY — SET SAIL! (" + P.placed.size + "/4 ships hiding)"
+        $("place-progress").textContent = P.placed.size + " of " + shipDefs().length + " ships placed";
+        $("btn-ready").disabled = P.placed.size < shipDefs().length;
+        $("btn-ready").textContent = P.placed.size < shipDefs().length
+          ? "🚀 READY — SET SAIL! (" + P.placed.size + "/" + shipDefs().length + " ships hiding)"
           : "🚀 READY — SET SAIL!";
         renderPlaceBoard();
       }
       function renderPlaceBoard(){
         const el = $("board-place");
         let html = '<span class="axis"></span>';
-        for (let c = 0; c < 8; c++) html += '<span class="axis">' + "ABCDEFGH"[c] + "</span>";
-        for (let r = 0; r < 8; r++){
+        const N = BN();
+        el.style.gridTemplateColumns = "22px repeat(" + N + ",1fr)";
+        el.classList.toggle("big", N >= 10);
+        for (let c = 0; c < N; c++) html += '<span class="axis">' + "ABCDEFGHIJ"[c] + "</span>";
+        for (let r = 0; r < N; r++){
           html += '<span class="axis">' + (r + 1) + "</span>";
-          for (let c = 0; c < 8; c++){
-            const idx = r * 8 + c;
+          for (let c = 0; c < N; c++){
+            const idx = r * N + c;
             const owner = placedShipAt(idx);
             html += '<button type="button" class="cell' + (owner ? " ship" : "") + '" data-cell="' + idx + '" aria-label="' + (owner ? "Pick up the " + owner + " at " : "Place ship at ") + coordName(idx) + '"></button>';
           }
@@ -3621,14 +3836,15 @@ println!("{}", total);`,
           return;
         }
         if (!P.sel || P.placed.has(P.sel)){ toast("👆 Grab a ship from the fleet list first, Captain — then tap the sea where she should hide!"); return; }
-        const def = SHIP_DEFS.find(d => d.name === P.sel);
-        const inBounds = P.orient === "h" ? (cell % 8) + def.len <= 8 : Math.floor(cell / 8) + def.len <= 8;
+        const def = shipDefs().find(d => d.name === P.sel);
+        const N = BN();
+        const inBounds = P.orient === "h" ? (cell % N) + def.len <= N : Math.floor(cell / N) + def.len <= N;
         if (!inBounds){
           toast("🪵 OOPS — the " + def.name + " would hang clean off the edge of the map! She needs " + def.len + " squares in a line — try a spot with more sea, or tap ROTATE!");
           vibrate(120); sfxThud(); return;
         }
         const cells = [];
-        for (let k = 0; k < def.len; k++) cells.push(P.orient === "h" ? cell + k : cell + k * 8);
+        for (let k = 0; k < def.len; k++) cells.push(P.orient === "h" ? cell + k : cell + k * N);
         if (cells.some(c => placedShipAt(c))){
           toast("💦 SPLASH — ships can't sit on top of each other, Captain! Pick a clear patch of sea for the " + def.name + ".");
           vibrate(120); sfxThud(); return;
@@ -3636,7 +3852,7 @@ println!("{}", total);`,
         P.placed.set(def.name, cells);
         P.orients.set(def.name, P.orient);
         sfxPlace(); vibrate(30);
-        const next = SHIP_DEFS.find(d => !P.placed.has(d.name));
+        const next = shipDefs().find(d => !P.placed.has(d.name));
         P.sel = next ? next.name : null;
         if (!next) toast("🎉 FLEET COMPLETE! Every ship is hiding snug. Happy with the map? Tap READY — SET SAIL!");
         renderPlacement();
@@ -3661,14 +3877,15 @@ println!("{}", total);`,
       });
       $("btn-clearfleet").addEventListener("click", () => {
         if (!P) return;
-        P.placed.clear(); P.orients.clear(); P.sel = SHIP_DEFS[0].name;
+        P.placed.clear(); P.orients.clear(); P.sel = shipDefs()[0].name;
         renderPlacement();
       });
       $("btn-ready").addEventListener("click", () => {
-        if (!P || P.placed.size < SHIP_DEFS.length) return;
+        if (!P || P.placed.size < shipDefs().length) return;
         startMatch(P.matchNo);
       });
       $("btn-place-back").addEventListener("click", () => {
+        setSeaTheme(null);
         $("screen-place").classList.add("hidden");
         $("screen-setup").classList.remove("hidden");
         window.scrollTo({ top: 0 });
@@ -3772,9 +3989,15 @@ println!("{}", total);`,
         $("screen-game").classList.add("hidden");
         $("screen-place").classList.add("hidden");
         $("screen-setup").classList.remove("hidden");
+        setSeaTheme(null);
         window.scrollTo({ top: 0 });
       }
       $("btn-quit").addEventListener("click", backToSetup);
+      $("btn-reset-progress").addEventListener("click", () => {
+        if (!confirm("Reset all yer bug-hunting progress? Seen puzzles will be forgotten.")) return;
+        try { Object.keys(localStorage).filter(k => k.indexOf("bb-seen-") === 0).forEach(k => localStorage.removeItem(k)); } catch (e) {}
+        toast("↺ Progress reset! Every puzzle is fresh again, matey.");
+      });
       $("btn-pause").addEventListener("click", pauseSolo);
       $("btn-resume").addEventListener("click", resumeSolo);
       $("btn-pause-quit").addEventListener("click", backToSetup);
