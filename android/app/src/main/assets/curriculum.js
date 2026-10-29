@@ -227,7 +227,7 @@
     const C = CURRICULUM[lang][ci]; const r = R(rng);
     const raw = C.v[vi](r);
     const p = done(r, raw, COMMENT[lang]);
-    if (raw.setup) p.setup = raw.setup;
+    if (raw.setup) p.setup = raw.setup; if (raw.sc) p.sc = raw.sc; if (raw.task) p.task = raw.task;
     p.k = C.k; p.m = C.m; p.ex = C.ex; p.vid = ci + ":" + vi;
     return p;
   }
