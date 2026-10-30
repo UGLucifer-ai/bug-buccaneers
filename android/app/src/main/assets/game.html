@@ -402,7 +402,7 @@
       <span class="sea-wave w2"></span>
     </div>
     <div class="wrap">
-      <div class="sound-row"><button class="help-btn" id="btn-help" type="button" aria-label="How to play">?</button><button class="sound-toggle sound-pill" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊 SOUND ON</button><button class="sound-pill" id="btn-reset-progress" type="button" style="margin-left:6px" aria-label="Reset progress">↺ RESET PROGRESS</button></div>
+      <div class="sound-row"><button class="help-btn" id="btn-help" type="button" aria-label="How to play">?</button><button class="sound-toggle sound-pill" id="btn-sound" type="button" aria-label="Sound on — tap to mute">🔊 SOUND ON</button><button class="sound-pill" id="btn-buzz" type="button" style="margin-left:6px" aria-label="Haptics on — tap to turn buzz off">📳 BUZZ ON</button><button class="sound-pill" id="btn-reset-progress" type="button" style="margin-left:6px" aria-label="Reset progress">↺ RESET PROGRESS</button></div>
 
       <!-- ================= SETUP ================= -->
       <section id="screen-setup" class="setup2">
@@ -2863,7 +2863,15 @@ println!("{}", total);`,
         const t = $("toast"); t.textContent = msg; t.classList.add("show");
         clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 3400);
       }
-      function vibrate(p){ if (navigator.vibrate) { try { navigator.vibrate(p); } catch(e){} } }
+      let hapticsOn = true;
+      try { hapticsOn = localStorage.getItem("bb-haptics") !== "off"; } catch (e) {}
+      function vibrate(p){ if (!hapticsOn || !navigator.vibrate) return; try { navigator.vibrate(p); } catch(e){} }
+      function updateBuzzBtn(){
+        const b = $("btn-buzz"); if (!b) return;
+        b.textContent = hapticsOn ? "📳 BUZZ ON" : "📴 BUZZ OFF";
+        b.setAttribute("aria-label", hapticsOn ? "Haptics on — tap to turn buzz off" : "Haptics off — tap to turn buzz on");
+        b.classList.toggle("muted", !hapticsOn);
+      }
 
       /* ============ TAP GUARD — a tap is a tap, a slide is a scroll ============
          Fires fn on pointerup ONLY if the finger stayed within 12px of where it
@@ -2880,6 +2888,7 @@ println!("{}", total);`,
           active = false;
           const dx = e.clientX - sx, dy = e.clientY - sy;
           if (dx * dx + dy * dy > 144) return; // finger slid — that was a scroll, not a tap
+          vibrate(8); // a tiny tick so every true tap is felt; fn's own buzz (if any) replaces it
           fn(e);
         });
         el.addEventListener("pointercancel", () => { active = false; });
@@ -3881,6 +3890,13 @@ println!("{}", total);`,
         updateSoundBtn();
         if (soundOn) sfxPlace();
       });
+      updateBuzzBtn();
+      $("btn-buzz").addEventListener("click", () => {
+        hapticsOn = !hapticsOn;
+        try { localStorage.setItem("bb-haptics", hapticsOn ? "on" : "off"); } catch (e) {}
+        updateBuzzBtn();
+        if (hapticsOn) vibrate([30, 40, 30]); // one friendly buzz so ye know it's alive
+      });
       document.addEventListener("pointerdown", e => {
         ensureAudio(); // first tap wakes the audio (and the music) — autoplay rules
         if (soundOn && e.target.closest && e.target.closest("button") && !e.target.closest("#btn-sound")) sfxTap();
@@ -3920,9 +3936,9 @@ println!("{}", total);`,
           if (P.placed.has(name)){
             P.sel = name; P.orient = P.orients.get(name) || "h";
             P.placed.delete(name); P.orients.delete(name);
-            sfxPage();
+            sfxPage(); vibrate(25);
             toast("🙌 Picked up the " + name + "! Spin her with ROTATE if ye like, then tap her new hiding spot.");
-          } else P.sel = name;
+          } else { P.sel = name; vibrate(12); }
           renderPlacement();
         }));
         $("btn-rotate").textContent = "🔄 ROTATE SHIP! (now pointing: " + (P.orient === "h" ? "sideways ↔" : "up-and-down ↕") + ")";
@@ -3987,6 +4003,7 @@ println!("{}", total);`,
       $("btn-rotate").addEventListener("click", () => {
         if (!P) return;
         P.orient = P.orient === "h" ? "v" : "h";
+        vibrate(15);
         renderPlacement();
       });
       $("btn-surprise").addEventListener("click", () => {
@@ -3998,17 +4015,19 @@ println!("{}", total);`,
           P.orients.set(s.name, (s.len === 1 || s.cells[1] - s.cells[0] === 1) ? "h" : "v");
         });
         P.sel = null;
-        sfxPlace();
+        sfxPlace(); vibrate([30, 40, 30]);
         toast("🎲 SURPRISE FLEET! Captain Milo hid every ship in a jiffy. Don't like a spot? Tap any ship to pick her up and move her yerself!");
         renderPlacement();
       });
       $("btn-clearfleet").addEventListener("click", () => {
         if (!P) return;
         P.placed.clear(); P.orients.clear(); P.sel = shipDefs()[0].name;
+        vibrate(20);
         renderPlacement();
       });
       $("btn-ready").addEventListener("click", () => {
         if (!P || P.placed.size < shipDefs().length) return;
+        vibrate([40, 50, 40]);
         startMatch(P.matchNo);
       });
       $("btn-place-back").addEventListener("click", () => {
@@ -4050,6 +4069,7 @@ println!("{}", total);`,
           b.addEventListener("click", () => {
             $(id).querySelectorAll("button").forEach(x => x.classList.remove("sel"));
             b.classList.add("sel");
+            vibrate(10);
             apply(b.dataset[attr]);
           });
         });
@@ -4090,6 +4110,7 @@ println!("{}", total);`,
         $("room-input").value = words[Math.floor(Math.random() * words.length)] + Math.floor(10 + Math.random() * 90);
       });
       $("btn-start").addEventListener("click", () => {
+        vibrate(25);
         if (isSolo()){
           setup.side = 1;
           setup.room = "SOLO" + Math.floor(1000 + Math.random() * 9000); // fresh seed each solo voyage — bugs shuffle every game
