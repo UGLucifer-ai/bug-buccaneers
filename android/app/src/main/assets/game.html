@@ -360,14 +360,14 @@
           /* ===== Title v2 (system fonts only, no external assets) ===== */
       .bb-title{ position:relative; display:flex; align-items:center; gap:10px; margin:2px 0 8px; animation:bbIn .9s cubic-bezier(.2,1.4,.4,1) both, bbBob 4s ease-in-out .9s infinite; }
       .bb-emblem{ width:clamp(58px,15vw,84px); height:auto; flex:none; filter:drop-shadow(0 4px 0 rgba(58,34,0,.35)); animation:bbSwing 4s ease-in-out infinite; transform-origin:50% 60%; }
-      .bb-words{ display:flex; flex-direction:column; line-height:.9; font-family:Impact,"Anton","Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif; font-weight:900; text-transform:uppercase; }
+      .bb-title{ container-type:inline-size; } .bb-words span{ white-space:nowrap; } .bb-words{ display:flex; flex-direction:column; line-height:.9; flex:1 1 auto; min-width:0; font-family:Impact,"Anton","Haettenschweiler","Arial Narrow Bold","Arial Black",sans-serif; font-weight:900; text-transform:uppercase; }
       .bb-words span{ position:relative; display:block; letter-spacing:.03em;
         background:linear-gradient(180deg,#fff6c9 0%,#ffd84d 35%,#f4a300 60%,#b86a00 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
         -webkit-text-stroke:2px #3a2200; paint-order:stroke fill;
         filter:drop-shadow(1px 1px 0 #7a3f00) drop-shadow(1px 1px 0 #7a3f00) drop-shadow(1px 1px 0 #5a2d00) drop-shadow(2px 3px 0 #3a2200) drop-shadow(0 6px 8px rgba(11,40,70,.35)); }
       .bb-words span::after{ content:attr(data-t); position:absolute; inset:0; background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.95) 50%,transparent 65%); background-size:250% 100%; background-position:150% 0; -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-stroke:0; animation:bbShine 3.2s ease-in-out 1.2s infinite; }
-      .bb-l1{ font-size:clamp(30px,8.5vw,44px); color:transparent; }
-      .bb-l2{ font-size:clamp(40px,12.4vw,66px); }
+      .bb-l1{ font-size:clamp(30px,8.5vw,44px); font-size:min(7.6cqw,44px); color:transparent; }
+      .bb-l2{ font-size:clamp(40px,12.4vw,66px);  font-size:min(10.9cqw,66px); }
       .bb-spark{ position:absolute; width:14px; height:14px; pointer-events:none; background:radial-gradient(circle,#fff 0 18%,transparent 20%), conic-gradient(from 45deg,transparent 0 10%,#fff3b0 12%,transparent 14% 35%,#fff3b0 37%,transparent 39% 60%,#fff3b0 62%,transparent 64% 85%,#fff3b0 87%,transparent 89%); border-radius:50%; opacity:0; animation:bbTw 2.4s ease-in-out infinite; }
       .bb-spark.s1{ top:4%; left:30%; } .bb-spark.s2{ top:40%; right:6%; animation-delay:.8s; } .bb-spark.s3{ bottom:2%; left:55%; animation-delay:1.5s; } .bb-spark.s4{ top:-4%; right:28%; animation-delay:2s; width:10px; height:10px; }
       .bb-tag{ display:inline-block; background:linear-gradient(90deg,#0b4f86,#0f6aa8); color:#fff7d6 !important; padding:7px 14px; border-radius:999px; border:2px solid #ffd166; box-shadow:0 0 0 0 rgba(255,209,102,.6), 0 4px 0 rgba(11,79,134,.25); animation:bbGlow 2.6s ease-in-out infinite; }
@@ -2739,7 +2739,8 @@ println!("{}", total);`,
             seen[key] = (seen[key] || []).concat([vi]); seenPut(seen);
           } else vi = Math.floor(rng() * CUR[ci].v.length);
           G.challengeIndex = ci;
-          G.challenge = window.BB_makeLesson(setup.lang, ci, vi, rng);
+          G.challenge = window.BB_makeLesson(setup.lang, ci, vi, mulberry32(4242));
+          G.narrKey = setup.lang + "-novice-c" + ci + "v" + vi; // canonical recorded lesson for this concept+variant
           G.orderPos++;
         } else if (hasTpl() && ((G.tplStep = (G.tplStep || 0) + 1) % 2 === 1 || !bank || !bank.length || bankDone)){
           // BEGINNER / EXPERT: every other round is a freshly generated whole program with hand-written decoys
@@ -2754,9 +2755,11 @@ println!("{}", total);`,
             seen.tpl = (seen.tpl || []).concat([ti]); seenPut(seen);
           } else ti = Math.floor(rng() * TL.length);
           G.challengeIndex = ti;
-          G.challenge = window.BB_makeTpl(setup.lang, setup.level, ti, rng);
+          G.challenge = window.BB_makeTpl(setup.lang, setup.level, ti, mulberry32(4242));
+          G.narrKey = setup.lang + "-" + setup.level + "-t" + ti; // canonical recorded lesson for this template
         } else {
         G.challengeIndex = G.order[G.orderPos];
+        G.narrKey = null;
         G.challenge = bank[G.challengeIndex];
         G.orderPos++;
         if (isSolo()){ const seen = seenGet(); const k = "b" + G.challengeIndex; if (!seen[k]){ seen[k] = 1; seenPut(seen); } }
@@ -3227,8 +3230,10 @@ println!("{}", total);`,
       let recordedKey = "";
       let recordedStopping = false; // true while stopVoice() is tearing a clip down, so its error event can't trigger the fallback
       function narrationKey(){
-        if (!G || G.challengeIndex === null || G.challengeIndex === undefined) return null;
-        if (G.challenge && G.challenge.gen) return null; // generated lesson: no matching recorded clip, device voice reads it
+        if (!G) return null;
+        if (G.narrKey) return G.narrKey; // generated lesson/template: a recorded Atlas clip exists for every type (canonical seed 4242)
+        if (G.challengeIndex === null || G.challengeIndex === undefined) return null;
+        if (G.challenge && G.challenge.gen) return null;
         return setup.lang + "-" + setup.level + "-" + G.challengeIndex;
       }
       function getMiloAudio(){
@@ -3284,15 +3289,18 @@ println!("{}", total);`,
         });
       }
       function fallbackToTTS(){
-        // The recorded clip would not load/play — hand the lesson to the
-        // device voice so the listen button always explains the bug.
+        // The recorded clip would not load/play. Milo's recorded voice or
+        // nothing: a lesson is NEVER handed to the device voice (Uday's
+        // rule — the robotic phone voice is what we removed). Stop quietly;
+        // the lesson text stays on screen.
         recordedOn = false;
         voiceMode = null;
         recordedStopping = true;
         if (miloAudio){ try { miloAudio.pause(); miloAudio.removeAttribute("src"); miloAudio.load(); } catch (e) {} }
         recordedStopping = false;
+        voiceOn = false;
         clearVoiceMarks();
-        startTTS();
+        updateVoiceBtn();
       }
       /* Device-voice fallback: always prefer a male (ideally British) voice so
          Milo never turns into the default robotic lady voice. */
@@ -3433,10 +3441,10 @@ println!("{}", total);`,
       }
       function startVoice(){
         if (!G || !G.challenge) return;
-        // Every language sails with Milo's real recorded voice first.
+        // Every lesson sails with Milo's real recorded voice. If no clip
+        // exists for a lesson, Milo stays silent — never the device voice.
         const key = narrationKey();
         if (key){ startRecorded(key); return; }
-        startTTS();
       }
       function startTTS(){
         if (!voiceOK){ voiceOn = false; voiceMode = null; updateVoiceBtn(); return; }
