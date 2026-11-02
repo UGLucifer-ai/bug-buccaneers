@@ -33,6 +33,35 @@ The complete web game is also contained in this repository as
   as an installable app.
 - `android/BUILD-NOTES.md` — the original Android build notes.
 
+## CI/CD pipeline
+
+[![CI/CD](https://github.com/UGLucifer-ai/bug-buccaneers/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/UGLucifer-ai/bug-buccaneers/actions/workflows/ci-cd.yml)
+
+Every push and pull request runs the check suite in `.github/workflows/ci-cd.yml`:
+
+1. **Asset completeness** (`ci/check_assets.py`) — all 973 narration clips listed in
+   `ci/audio-manifest.txt` must be present across the 12 language folders, plus the
+   intro and phrase clips. A missing clip would mean a lesson playing in silence.
+2. **Web/Android sync** (`ci/check_sync.py`) — `index.html`, `ai-milo.js` and the
+   curriculum files must be byte-identical to the copies bundled in the Android app,
+   so the site and the app can never quietly drift apart. (The app's audio bundle is
+   currently partial by design — a tracked warning in the check output, pending the
+   offline-bundle vs voice-pack decision.)
+3. **Syntax and references** (`ci/check_syntax.py`) — every shipped JS file must parse,
+   and every local file `index.html` references must exist.
+
+**Deploying:** a green build on `main` may deploy to GitHub Pages, but the deploy job
+runs in the `production` environment, which requires a human approval first. Nothing
+reaches the live site automatically — automation proposes, a person disposes. That
+gate is deliberate: the live game is played by children, and its maintainer approves
+every release personally.
+
+Run the checks locally any time:
+
+```sh
+python3 ci/check_assets.py && python3 ci/check_sync.py && python3 ci/check_syntax.py
+```
+
 ## Rebuild the Android app
 
 The Android app is a minimal single-activity WebView shell. It needs no
