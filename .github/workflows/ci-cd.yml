@@ -1,0 +1,57 @@
+name: CI/CD — Bug Buccaneers
+
+# Every push and pull request runs the check suite.
+# A push to main may then deploy to GitHub Pages, but only after a human
+# approves the production environment — nothing goes live automatically.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Checks (assets, sync, syntax)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Narration asset completeness
+        run: python3 ci/check_assets.py
+      - name: Web/Android copy sync
+        run: python3 ci/check_sync.py
+      - name: JS syntax + page references
+        run: python3 ci/check_syntax.py
+
+  deploy:
+    name: Deploy to GitHub Pages (approval-gated)
+    needs: checks
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - id: deployment
+        uses: actions/deploy-pages@v4
